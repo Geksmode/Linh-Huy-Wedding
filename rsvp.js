@@ -1,5 +1,5 @@
 function Rsvp({go,t,lang}){
-  const r=t.rsvp;
+  const r=t.rsvp;const mob=useIsMobile();
   const [f,setF]=React.useState({name:'',email:'',attending:'y',party:r.partyOpts[0],events:[],note:''});
   const set=k=>v=>setF(p=>({...p,[k]:v&&v.target?v.target.value:v}));
   const [status,setStatus]=React.useState('idle');
@@ -17,9 +17,9 @@ function Rsvp({go,t,lang}){
       setStatus('done');
     }catch(err){console.error(err);setStatus('error');}
   }
-  return <main style={{background:'var(--blush)',padding:'80px 24px 96px'}}>
+  return <main style={{background:'var(--blush)',padding:mob?'48px 12px 64px':'80px 24px 96px'}}>
     <SectionHeading eyebrow={r.eyebrow} title={r.title}/>
-    <form onSubmit={submit} style={{maxWidth:560,margin:'40px auto 0',background:'var(--surface-card)',borderRadius:'var(--radius-lg)',boxShadow:'var(--shadow-paper)',padding:'36px 32px',display:'grid',gap:22}}>
+    <form onSubmit={submit} style={{maxWidth:560,margin:(mob?28:40)+'px auto 0',background:'var(--surface-card)',borderRadius:'var(--radius-lg)',boxShadow:'var(--shadow-paper)',padding:mob?'24px 18px':'36px 32px',display:'grid',gap:22}}>
       <TextField label={r.name} placeholder="Nguyễn Thị Mai" value={f.name} onChange={set('name')} error={nameErr||undefined}/>
       <TextField label={r.email} type="email" placeholder="mai@example.com" value={f.email} onChange={set('email')}/>
       <ChoiceGroup label={r.attend} options={[{value:'y',label:r.yes},{value:'n',label:r.no}]} value={f.attending} onChange={set('attending')}/>

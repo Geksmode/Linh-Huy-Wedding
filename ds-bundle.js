@@ -163,16 +163,21 @@ function Countdown({
   return /*#__PURE__*/React.createElement("div", {
     style: {
       display: 'flex',
-      gap: 12,
-      justifyContent: 'center'
+      gap: 'clamp(6px,2vw,12px)',
+      justifyContent: 'center',
+      flexWrap: 'nowrap',
+      width: '100%',
+      maxWidth: 404
     }
   }, parts.map(([k, v], i) => {
     const l = labels[i] || k;
     return /*#__PURE__*/React.createElement("div", {
       key: k,
       style: {
-        minWidth: 92,
-        padding: '16px 10px 14px',
+        flex: '1 1 0',
+        minWidth: 0,
+        maxWidth: 92,
+        padding: 'clamp(12px,3vw,16px) 6px 14px',
         borderRadius: 'var(--radius-arch)',
         background: inv ? 'rgba(253,245,232,.1)' : 'var(--tile-' + (i + 1) + ')',
         border: '1px solid var(--tile-border)',
@@ -180,14 +185,14 @@ function Countdown({
       }
     }, /*#__PURE__*/React.createElement("div", {
       style: {
-        font: '500 44px/1 var(--font-serif)',
+        font: '500 clamp(28px,8vw,44px)/1 var(--font-serif)',
         color: inv ? 'var(--mango-300)' : 'var(--text-strong)',
         fontVariantNumeric: 'tabular-nums'
       }
     }, String(v).padStart(2, '0')), /*#__PURE__*/React.createElement("div", {
       style: {
-        font: '600 10px var(--font-sans)',
-        letterSpacing: 'var(--ls-label)',
+        font: '600 clamp(9px,2.6vw,10px) var(--font-sans)',
+        letterSpacing: '.12em',
         textTransform: 'uppercase',
         color: inv ? 'var(--paper)' : 'var(--text-muted)',
         marginTop: 8
@@ -277,24 +282,25 @@ function EventCard({
       boxShadow: 'var(--shadow-paper)',
       overflow: 'hidden',
       display: 'grid',
-      gridTemplateRows: 'auto 1fr'
+      gridTemplateRows: 'auto 1fr',
+      gridTemplateColumns: 'minmax(0,1fr)'
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
       background: bg,
       color: fg,
       borderRadius: '0 0 50% 50% / 0 0 28px 28px',
-      padding: '22px 24px 30px',
+      padding: '22px clamp(10px,3vw,24px) 30px',
       textAlign: 'center'
     }
   }, /*#__PURE__*/React.createElement("div", {
     style: {
-      font: (String(time).length > 6 ? '500 28px/1' : '500 36px/1') + ' var(--font-serif)',
+      font: (String(time).length > 6 ? '500 clamp(19px,5.2vw,28px)/1' : '500 36px/1') + ' var(--font-serif)',
       whiteSpace: 'nowrap'
     }
   }, time)), /*#__PURE__*/React.createElement("div", {
     style: {
-      padding: '20px 24px 26px',
+      padding: '20px clamp(12px,3vw,24px) 26px',
       display: 'grid',
       gap: 8,
       textAlign: 'center'
@@ -303,7 +309,8 @@ function EventCard({
     style: {
       margin: 0,
       font: 'var(--fs-display-sm)/1.1 var(--font-display)',
-      color: 'var(--text-strong)'
+      color: 'var(--text-strong)',
+      overflowWrap: 'anywhere'
     }
   }, title), place && /*#__PURE__*/React.createElement("div", {
     style: {
@@ -320,7 +327,8 @@ function EventCard({
   }, address), note && /*#__PURE__*/React.createElement("div", {
     style: {
       font: 'italic 16px/1.45 var(--font-serif)',
-      color: 'var(--text-body)'
+      color: 'var(--text-body)',
+      overflowWrap: 'anywhere'
     }
   }, note), children && /*#__PURE__*/React.createElement("div", {
     style: {
@@ -649,7 +657,8 @@ function Dialog({
     style: {
       margin: 0,
       font: 'var(--fs-display-sm)/1.1 var(--font-display)',
-      color: 'var(--text-strong)'
+      color: 'var(--text-strong)',
+      overflowWrap: 'anywhere'
     }
   }, title), /*#__PURE__*/React.createElement("div", {
     style: {

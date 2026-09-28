@@ -74,4 +74,6 @@ a{color:var(--accent-primary);text-underline-offset:3px}a:hover{color:var(--acce
 ::selection{background:var(--mango-300);color:var(--plum-ink)}
 /* Bright Sunlist demo lacks Vietnamese glyphs (Ơ, Ư, stacked tones) — set data-lang="vi" on <html> (or any wrapper) to swap the display face */
 [data-lang="vi"]{--font-display:var(--font-display-vi)}
+@media (max-width:640px){:root{--fs-script-xl:76px;--fs-script-lg:60px;--fs-script-md:42px;--fs-display-xl:56px;--fs-display-lg:40px;--fs-display-md:30px;--fs-display-sm:25px;--fs-body-lg:19px;--fs-body:17px}}
+html{-webkit-text-size-adjust:100%}img{max-width:100%}
 
