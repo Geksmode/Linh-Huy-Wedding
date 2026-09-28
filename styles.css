@@ -1,6 +1,77 @@
-@import "tokens/fonts.css";
-@import "tokens/colors.css";
-@import "tokens/typography.css";
-@import "tokens/spacing.css";
-@import "tokens/themes.css";
-@import "tokens/base.css";
+@import url("https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Be+Vietnam+Pro:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap");
+/* Bright Sunlist (demo): digits are foundry watermarks — excluded via unicode-range so numerals fall back to EB Garamond */
+@font-face{font-family:"Bright Sunlist";src:url("BrightSunlist-Regular.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap;unicode-range:U+0000-002F,U+003A-10FFFF}
+@font-face{font-family:"Bright Sunlist";src:url("BrightSunlist-Italic.ttf") format("truetype");font-weight:400;font-style:italic;font-display:swap;unicode-range:U+0000-002F,U+003A-10FFFF}
+@font-face{font-family:"First Encounter";src:url("FirstEncounter.otf") format("opentype");font-weight:400;font-style:normal;font-display:swap}
+
+:root{
+/* Brights */
+--lacquer-50:#FBE7E4;--lacquer-300:#E8766B;--lacquer-500:#C8322B;--lacquer-700:#8E1F1C;
+--marigold-50:#FEF1DD;--marigold-300:#F8C27A;--marigold-500:#F2A33A;--marigold-700:#B96F12;
+--mango-50:#FEF7DA;--mango-300:#FBDF86;--mango-500:#F7C948;--mango-700:#B48A12;
+--lotus-50:#FDE8EC;--lotus-300:#F5A7B4;--lotus-500:#EE7A8E;--lotus-700:#B8445A;
+--hibiscus-50:#F9E1EB;--hibiscus-300:#E07CA5;--hibiscus-500:#C2336E;--hibiscus-700:#86204B;
+--terracotta-50:#FBE9E0;--terracotta-300:#EDA17F;--terracotta-500:#D8683E;--terracotta-700:#9A4424;
+--jade-50:#E1F1EA;--jade-300:#7DBFA4;--jade-500:#2F8466;--jade-700:#1D5A44;
+--gold-50:#F7EEDC;--gold-300:#D9B877;--gold-500:#B8893B;--gold-700:#8A6424;
+--cinnabar-500:#A8262B;--cinnabar-700:#861C21;
+/* Neutrals — warm paper to plum ink */
+--paper:#FDF5E8;--cream:#F5E9D3;--cream-2:#EFDFC3;--paper-2:#F9EBD7;--blush:#F9E3DA;--sand:#EBD6BD;--taupe:#B89C86;--cocoa:#7A5A52;--plum-ink:#3B1730;--plum-night:#24101E;--white:#FFFFFF;
+/* Semantic */
+--bg-page:var(--paper);--bg-alt:var(--paper-2);--bg-inverse:var(--plum-night);
+--surface-card:var(--white);--surface-tint:var(--blush);
+--text-strong:var(--plum-ink);--text-body:#4E2A40;--text-muted:var(--cocoa);--text-inverse:var(--paper);
+--accent-primary:var(--lacquer-500);--accent-primary-hover:var(--lacquer-700);
+--accent-warm:var(--marigold-500);--accent-sun:var(--mango-500);--accent-soft:var(--lotus-500);--accent-bold:var(--hibiscus-500);--accent-cool:var(--jade-500);
+--border-soft:var(--sand);--border-strong:var(--plum-ink);--focus-ring:var(--marigold-500);
+--tile-1:var(--lacquer-50);--tile-2:var(--marigold-50);--tile-3:var(--lotus-50);--tile-4:var(--jade-50);--tile-border:transparent;
+--success:var(--jade-500);--warning:var(--marigold-700);--danger:var(--lacquer-700);
+}
+
+:root{
+--font-display:"Bright Sunlist","EB Garamond",Georgia,serif;
+--font-display-vi:"Playfair Display","EB Garamond",Georgia,serif;
+--font-script:"First Encounter","EB Garamond",cursive;
+--font-serif:"EB Garamond",Georgia,serif;
+--font-sans:"Be Vietnam Pro",system-ui,sans-serif;
+--fs-script-xl:128px;--fs-script-lg:88px;--fs-script-md:56px;
+--fs-display-xl:96px;--fs-display-lg:64px;--fs-display-md:44px;--fs-display-sm:32px;
+--fs-body-lg:22px;--fs-body:18px;--fs-body-sm:16px;--fs-label:12px;--fs-caption:14px;
+--lh-tight:1.05;/* @kind other */
+--lh-snug:1.2;/* @kind other */
+--lh-body:1.55;/* @kind other */
+
+--ls-label:0.22em;--ls-display:-0.01em;
+}
+
+:root{
+--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:24px;--space-6:32px;--space-7:48px;--space-8:64px;--space-9:96px;--space-10:144px;
+--radius-sm:6px;--radius-md:14px;--radius-lg:28px;--radius-arch:999px 999px 0 0;--radius-pill:999px;
+--border-hair:1px;--border-bold:2px;
+--shadow-paper:0 1px 0 rgba(59,23,48,.06),0 8px 24px -12px rgba(59,23,48,.25);
+--shadow-lift:0 2px 0 rgba(59,23,48,.08),0 18px 40px -16px rgba(142,31,28,.35);
+--shadow-stamp:4px 4px 0 var(--plum-ink);
+--ease-out:cubic-bezier(.22,.8,.3,1);/* @kind other */
+--ease-bloom:cubic-bezier(.34,1.4,.64,1);/* @kind other */
+--dur-fast:150ms;/* @kind other */
+--dur-base:260ms;/* @kind other */
+--dur-slow:600ms;/* @kind other */
+--content-max:1120px;--measure:62ch;
+}
+
+/* Traditional theme — matches the printed invitation: cinnabar red on cream, gold rules. Set data-theme="traditional" on <html> or a wrapper. */
+[data-theme="traditional"]{
+--bg-page:var(--cream);--bg-alt:var(--cream-2);--surface-card:#FBF4E6;--surface-tint:var(--cream-2);
+--text-strong:#6E1518;--text-body:#4A2A22;--text-muted:#7A5A48;
+--accent-primary:var(--cinnabar-500);--accent-primary-hover:var(--cinnabar-700);
+--accent-warm:var(--gold-500);--accent-sun:var(--gold-300);--accent-soft:var(--gold-300);--accent-bold:var(--cinnabar-500);
+--border-soft:#D9C29A;--focus-ring:var(--gold-500);
+--tile-1:#FBF4E6;--tile-2:#FBF4E6;--tile-3:#FBF4E6;--tile-4:#FBF4E6;--tile-border:var(--gold-300);
+}
+
+body{transition:background var(--dur-base);background:var(--bg-page);color:var(--text-body);font-family:var(--font-serif);font-size:var(--fs-body);line-height:var(--lh-body);-webkit-font-smoothing:antialiased}
+a{color:var(--accent-primary);text-underline-offset:3px}a:hover{color:var(--accent-primary-hover)}
+::selection{background:var(--mango-300);color:var(--plum-ink)}
+/* Bright Sunlist demo lacks Vietnamese glyphs (Ơ, Ư, stacked tones) — set data-lang="vi" on <html> (or any wrapper) to swap the display face */
+[data-lang="vi"]{--font-display:var(--font-display-vi)}
+
