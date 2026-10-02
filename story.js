@@ -22,7 +22,7 @@ const clamp01=x=>Math.max(0,Math.min(1,x));
 // f: continuous position in the story (-1 … last stop). Between two stops, the change (e: 0 → 1) happens in
 // the middle of the scroll, so everything holds still for a while on each stop.
 function storyPhase(f){
-  const seg=Math.min(STORY_STEPS.length-3,Math.floor(f)),x=clamp01((f-seg-.2)/.6);
+  const seg=Math.min(STORY_STEPS.length-3,Math.floor(f)),x=clamp01((f-seg-.1)/.8);
   return {seg,e:x*x*(3-2*x)};
 }
 // Visibility of beat i: it fades out exactly while the map flies to the next stop. Photos cross-fade;
@@ -88,9 +88,32 @@ function Story({t,theme}){
   const pics=[['photobooth.png','50% 30%'],['story-linh-cafe.jpg','50% 38%'],['story-cafe.jpg','50% 58%'],['story-seoul-selfie.jpg','50% 52%'],['campfire.png','45% 50%']];
   const colors=theme==='traditional'?['--cinnabar-500','--gold-500','--cinnabar-500','--gold-500','--cinnabar-500']:['--marigold-500','--lotus-500','--jade-500','--hibiscus-500','--lacquer-500'];
   const sec=React.useRef(),card=React.useRef(),gapRef=React.useRef(),canvas=React.useRef();
-  const photoEls=React.useRef([]),textEls=React.useRef([]);
+  const photoEls=React.useRef([]),textEls=React.useRef([]),dotEls=React.useRef([]),stopEls=React.useRef([]),hint=React.useRef();
   const [navH,setNavH]=React.useState(80);
   React.useEffect(()=>{const hd=document.querySelector('header');if(hd)setNavH(hd.offsetHeight)},[mob,stacked]);
+  // One scroll-snap stop per moment (scroll-snap-stop: always), so a fast flick still stops at the next
+  // moment instead of skipping several. The footer is the last stop so the end of the page stays reachable.
+  React.useEffect(()=>{
+    const html=document.documentElement,ft=document.querySelector('footer');
+    html.style.scrollSnapType='y mandatory';html.style.scrollPaddingTop=navH+'px';if(ft)ft.style.scrollSnapAlign='end';
+    // Mouse wheel / trackpad: one gesture = one moment (touch keeps native snapping). Wheel events are
+    // ignored until the gesture has paused for 200 ms and the step animation has had time to run.
+    let lockedUntil=0,quietTimer=0,gestureOver=true;
+    const stops=()=>[0,...stopEls.current.filter(Boolean).map(el=>Math.round(el.getBoundingClientRect().top+scrollY-navH))];
+    const onWheel=ev=>{
+      if(ev.ctrlKey||Math.abs(ev.deltaY)<Math.abs(ev.deltaX))return;
+      const st=stops(),y=scrollY,last=st[st.length-1],dir=Math.sign(ev.deltaY);
+      if((dir>0&&y>=last-2)||(dir<0&&y>last+2))return; // past the story: normal scrolling
+      ev.preventDefault();
+      clearTimeout(quietTimer);quietTimer=setTimeout(()=>{gestureOver=true},200);
+      if(!gestureOver||performance.now()<lockedUntil)return;
+      gestureOver=false;lockedUntil=performance.now()+700;
+      const next=dir>0?st.find(p=>p>y+2):[...st].reverse().find(p=>p<y-2);
+      if(next!==undefined)window.scrollTo({top:next,behavior:'smooth'});
+    };
+    addEventListener('wheel',onWheel,{passive:false});
+    return()=>{html.style.scrollSnapType='';html.style.scrollPaddingTop='';if(ft)ft.style.scrollSnapAlign='';removeEventListener('wheel',onWheel);clearTimeout(quietTimer);};
+  },[navH]);
   React.useEffect(()=>{
     const cs=getComputedStyle(document.documentElement),cv=n=>cs.getPropertyValue(n).trim();
     const col={taupe:cv('--taupe'),lotus:cv('--lotus-500'),marigold:cv('--marigold-500'),accent:cv('--accent-primary'),white:cv('--white'),strong:cv('--text-strong'),muted:cv('--text-muted')};
@@ -103,10 +126,15 @@ function Story({t,theme}){
       if(ctx&&size.w&&key!==drawn){drawn=key;const dpr=Math.min(2,devicePixelRatio||1);ctx.setTransform(dpr,0,0,dpr,0,0);drawStoryMap(ctx,size.w,size.h,f,focus,s.places,mob,col);}
       photoEls.current.forEach((el,i)=>el&&Object.assign(el.style,layerStyle(f,i,false)));
       textEls.current.forEach((el,i)=>{if(!el)return;Object.assign(el.style,layerStyle(f,i,true));el.setAttribute('aria-hidden',beatOpacity(f,i,true)<.5);});
+      const at=Math.max(0,Math.min(n-1,Math.round(f)));
+      dotEls.current.forEach((el,i)=>{if(!el)return;el.style.width=i===at?'22px':'8px';el.style.opacity=i===at?1:.35;el.setAttribute('aria-current',i===at?'step':'false');});
+      if(hint.current)hint.current.style.opacity=clamp01((-.5-f)*4);
     };
-    // The story glides towards the scroll position (instead of jumping with each mouse-wheel notch).
-    const tick=now=>{raf=0;const tg=target(),dt=Math.min(64,now-(last||now));last=now;
-      const prev=cur;cur=cur===null?tg:cur+(tg-cur)*(1-Math.exp(-dt/110));
+    // The story moves towards the scroll position at a capped speed, so a snap to the next moment plays as
+    // a ~1.3 s transition instead of following the (very quick) snap scroll. Long jumps (dot clicks) go faster.
+    const tick=now=>{raf=0;const tg=target(),dt=Math.min(100,now-(last||now));last=now;
+      const prev=cur;
+      if(cur===null)cur=tg;else{const df=tg-cur,v=Math.max(.6,Math.abs(df)*1.2)*dt/1000;cur+=Math.sign(df)*Math.min(Math.abs(df),v);}
       if(Math.abs(tg-cur)<.001)cur=tg;else raf=requestAnimationFrame(tick);
       if(cur!==prev)paint(cur);if(!raf)last=0;};
     const on=()=>{if(!raf)raf=requestAnimationFrame(tick)};
@@ -129,11 +157,24 @@ function Story({t,theme}){
     <h3 style={{margin:0,font:'var(--fs-display-sm)/1.2 var(--font-display)',color:'var(--text-strong)'}}>{ti}</h3>
     <p style={{margin:0,font:'var(--fs-body-lg)/var(--lh-body) var(--font-serif)',color:'var(--text-body)',maxWidth:'42ch'}}>{b}</p>
   </div>)}</div>;
+  // Progress dots (click = go to that moment) and a "scroll" hint shown before the story starts.
+  const goTo=i=>{const el=stopEls.current[i];if(el)window.scrollTo({top:el.getBoundingClientRect().top+scrollY-navH,behavior:'smooth'});};
+  const progress=<div style={{position:'absolute',left:0,right:0,bottom:mob?10:16,display:'flex',justifyContent:'center'}}>
+    <nav aria-label={s.progressLabel} style={{display:'flex',gap:6}}>{s.beats.map(([y],i)=><button key={y} ref={el=>dotEls.current[i]=el} onClick={()=>goTo(i)} aria-label={y} aria-current={i===0?'step':'false'}
+      style={{width:i===0?22:8,height:8,padding:0,border:0,borderRadius:'var(--radius-pill)',background:'var(--text-strong)',opacity:i===0?1:.35,cursor:'pointer',transition:'width var(--dur-base) var(--ease-out), opacity var(--dur-base)'}}/>)}</nav>
+  </div>;
   const map=<canvas ref={canvas} role="img" aria-label={s.mapLabel} style={{position:'absolute',inset:0,width:'100%',height:'100%'}}/>;
   const cardStyle={position:'relative',width:'100%',maxWidth:1200,margin:'0 auto',borderRadius:'var(--radius-lg)',overflow:'hidden',background:'var(--paper-2)'};
-  return <main style={{padding:mob?'56px 16px 64px':'80px 24px 96px'}}>
+  return <main style={{position:'relative',padding:mob?'56px 16px 64px':'80px 24px 96px'}}>
+    <style>{'.lh-bob{animation:lhbob 1.4s var(--ease-out) infinite}@keyframes lhbob{50%{transform:translateY(3px)}}@media (prefers-reduced-motion:reduce){.lh-bob{animation:none}}'}</style>
+    <div aria-hidden="true" style={{position:'absolute',top:0,left:0,width:1,height:1,scrollSnapAlign:'start'}}/>
     <SectionHeading eyebrow={s.eyebrow} script={s.script} title={s.title}/>
-    <section ref={sec} style={{height:'calc('+(100+n*75)+'vh - '+navH+'px)',marginTop:mob?24:40}}>
+    <div ref={hint} aria-hidden="true" style={{display:'flex',justifyContent:'center',alignItems:'center',gap:6,marginTop:mob?14:20,font:'600 11px var(--font-sans)',letterSpacing:'.14em',textTransform:'uppercase',color:'var(--text-muted)'}}>
+      {s.scrollHint}<svg width="12" height="12" viewBox="0 0 12 12" className="lh-bob"><path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+    </div>
+    <section ref={sec} style={{position:'relative',height:'calc('+(100+n*75)+'vh - '+navH+'px)',marginTop:mob?24:40}}>
+      {s.beats.map(([y],i)=><div key={y} ref={el=>stopEls.current[i]=el} aria-hidden="true" style={{position:'absolute',left:0,width:1,height:1,pointerEvents:'none',
+        top:'calc((100% - (100vh - '+navH+'px)) * '+((i+1)/n)+')',scrollSnapAlign:'start',scrollSnapStop:'always'}}/>)}
       <div style={{position:'sticky',top:navH,height:'calc(100vh - '+navH+'px)',display:'grid',alignItems:'center'}}>
         {stacked
           ?<div ref={card} style={{...cardStyle,height:'calc(100% - 16px)'}}>
@@ -142,6 +183,7 @@ function Story({t,theme}){
             <div style={{position:'relative',height:'100%',display:'grid',gridTemplateRows:'clamp(100px,22vh,'+(mob?200:260)+'px) auto 1fr',gap:mob?10:20,padding:mob?12:28}}>
               <div ref={gapRef}/>{photos}{texts}
             </div>
+            {progress}
           </div>
           :<div ref={card} style={{...cardStyle,height:'min(640px, calc(100% - 48px))'}}>
             {map}
@@ -149,6 +191,7 @@ function Story({t,theme}){
             <div style={{position:'relative',height:'100%',display:'grid',gridTemplateColumns:'minmax(0,1fr) minmax(0,1.1fr) minmax(0,300px)',gap:32,padding:'40px 48px',alignItems:'center'}}>
               {texts}<div ref={gapRef} style={{alignSelf:'stretch'}}/>{photos}
             </div>
+            {progress}
           </div>}
       </div>
     </section>
