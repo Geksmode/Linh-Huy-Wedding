@@ -1,16 +1,17 @@
 // Our story — illustrated map driven directly by scroll, so map, photo and text move together.
-// Story stops: Paris & Phủ Lý → Seoul (met), Seoul → Paris (distance), Paris → Seoul (reunited), Seoul → Phủ Lý (wedding).
-// Stops are indexed -1 (intro) to 3; each has a camera box in map coords (mapdots.js) and what is shown.
-const STORY_CAMS=[[1377,180,2705,740],[1397,240,2797,660],[1397,240,2797,660],[2257,274,2777,574],[2217,310,2647,670]];
+// Story stops: Paris & Phủ Lý → Seoul (met), Seoul → Paris (distance), Paris → Seoul (reunited), Seoul (life there), Seoul → Phủ Lý (wedding).
+// Stops are indexed -1 (intro) to 4; each has a camera box in map coords (mapdots.js) and what is shown.
+const STORY_CAMS=[[1377,180,2705,740],[1397,240,2797,660],[1397,240,2797,660],[2257,274,2777,574],[2347,324,2687,524],[2217,310,2647,670]];
 const STORY_STEPS=[
   {r0:0,r1:0,r3:0,dim0:0,dim1:0,h2:0,h3:0,lp:.5,ls:.5,ll:.5},
   {r0:1,r1:1,r3:0,dim0:0,dim1:0,h2:0,h3:0,lp:1,ls:1,ll:1},
   {r0:1,r1:1,r3:0,dim0:0,dim1:1,h2:0,h3:0,lp:1,ls:1,ll:.5},
   {r0:1,r1:1,r3:0,dim0:1,dim1:1,h2:1,h3:0,lp:.5,ls:1,ll:.5},
+  {r0:1,r1:1,r3:0,dim0:1,dim1:1,h2:1,h3:0,lp:.5,ls:1,ll:.5},
   {r0:1,r1:1,r3:1,dim0:1,dim1:1,h2:1,h3:1,lp:.5,ls:1,ll:1}
 ];
 // Planes flying while scrolling from stop i to stop i+1 (key = i): route and direction.
-const STORY_FLIGHTS={'-1':[['r0',1],['r1',1]],0:[['r0',-1]],1:[['r0',1]],2:[['r3',1]]};
+const STORY_FLIGHTS={'-1':[['r0',1],['r1',1]],0:[['r0',-1]],1:[['r0',1]],3:[['r3',1]]};
 const PLANE='M11 0C11-1.2 9-1.6 7-1.6H2L-4-9H-7L-3-1.6H-8L-10-4.5H-12L-11 0-12 4.5H-10L-8 1.6H-3L-7 9H-4L2 1.6H7C9 1.6 11 1.2 11 0Z';
 const lerp=(a,b,t)=>a+(b-a)*t;
 const clamp01=x=>Math.max(0,Math.min(1,x));
@@ -21,10 +22,10 @@ function useSize(ref){
   return s;
 }
 
-// f: continuous position in the story (-1 … 3). Between two stops, the change (e: 0 → 1) happens in
+// f: continuous position in the story (-1 … last stop). Between two stops, the change (e: 0 → 1) happens in
 // the middle of the scroll, so everything holds still for a while on each stop.
 function storyPhase(f){
-  const seg=Math.min(2,Math.floor(f)),x=clamp01((f-seg-.2)/.6);
+  const seg=Math.min(STORY_STEPS.length-3,Math.floor(f)),x=clamp01((f-seg-.2)/.6);
   return {seg,e:x*x*(3-2*x)};
 }
 // Visibility of beat i: it fades out exactly while the map flies to the next stop. Photos cross-fade;
@@ -77,8 +78,8 @@ function StoryMap({f,places,label,mob,focus}){
 // moves the story forward (f), so the three always change together.
 function Story({t,theme}){
   const s=t.story;const mob=useIsMobile();const n=s.beats.length;
-  const pics=[['photobooth.png','50% 30%'],['picnic-selfie.png','50% 45%'],['heart-frame.png','50% 45%'],['campfire.png','45% 50%']];
-  const colors=theme==='traditional'?['--cinnabar-500','--gold-500','--cinnabar-500','--gold-500']:['--marigold-500','--lotus-500','--jade-500','--lacquer-500'];
+  const pics=[['photobooth.png','50% 30%'],['story-linh-cafe.jpg','50% 38%'],['story-cafe.jpg','50% 58%'],['story-seoul-selfie.jpg','50% 52%'],['campfire.png','45% 50%']];
+  const colors=theme==='traditional'?['--cinnabar-500','--gold-500','--cinnabar-500','--gold-500','--cinnabar-500']:['--marigold-500','--lotus-500','--jade-500','--hibiscus-500','--lacquer-500'];
   const sec=React.useRef();const [f,setF]=React.useState(-1);
   const [navH,setNavH]=React.useState(80);
   React.useEffect(()=>{const hd=document.querySelector('header');if(hd)setNavH(hd.offsetHeight)},[mob]);
