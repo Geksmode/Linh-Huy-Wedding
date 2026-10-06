@@ -1,19 +1,18 @@
 // Our story — illustrated map driven directly by scroll, so map, photo and text move together.
-// Story stops: Paris & Phủ Lý → Seoul (met), Seoul → Paris (distance), Paris → Seoul (reunited), Seoul (life there), Seoul → Phủ Lý (wedding).
-// Stops are indexed -1 (intro) to 4; each has a camera box in map coords (mapdots.js) and what is shown.
+// Story stops: Paris & Phủ Lý → Seoul (met), Seoul → Paris (distance), Paris → Seoul (back to Seoul), Seoul → Phủ Lý (next stop).
+// Stops are indexed -1 (intro) to 3; each has a camera box in map coords (mapdots.js) and what is shown.
 // Performance (iPad): the map is drawn on a canvas, and scrolling never re-renders React — each frame
 // only redraws the canvas and sets opacity/transform on the photo and text layers.
-const STORY_CAMS=[[1377,180,2705,740],[1397,240,2797,660],[1397,240,2797,660],[2257,274,2777,574],[2347,324,2687,524],[2217,310,2647,670]];
+const STORY_CAMS=[[1377,180,2705,740],[1397,240,2797,660],[1397,240,2797,660],[2257,274,2777,574],[2217,310,2647,670]];
 const STORY_STEPS=[
   {r0:0,r1:0,r3:0,dim0:0,dim1:0,h2:0,h3:0,lp:.5,ls:.5,ll:.5},
   {r0:1,r1:1,r3:0,dim0:0,dim1:0,h2:0,h3:0,lp:1,ls:1,ll:1},
   {r0:1,r1:1,r3:0,dim0:0,dim1:1,h2:0,h3:0,lp:1,ls:1,ll:.5},
   {r0:1,r1:1,r3:0,dim0:1,dim1:1,h2:1,h3:0,lp:.5,ls:1,ll:.5},
-  {r0:1,r1:1,r3:0,dim0:1,dim1:1,h2:1,h3:0,lp:.5,ls:1,ll:.5},
   {r0:1,r1:1,r3:1,dim0:1,dim1:1,h2:1,h3:1,lp:.5,ls:1,ll:1}
 ];
 // Planes flying while scrolling from stop i to stop i+1 (key = i): route and direction.
-const STORY_FLIGHTS={'-1':[['r0',1],['r1',1]],0:[['r0',-1]],1:[['r0',1]],3:[['r3',1]]};
+const STORY_FLIGHTS={'-1':[['r0',1],['r1',1]],0:[['r0',-1]],1:[['r0',1]],2:[['r3',1]]};
 const PLANE='M11 0C11-1.2 9-1.6 7-1.6H2L-4-9H-7L-3-1.6H-8L-10-4.5H-12L-11 0-12 4.5H-10L-8 1.6H-3L-7 9H-4L2 1.6H7C9 1.6 11 1.2 11 0Z';
 const HEART='M0 7C-12-2-9-14 0-7C9-14 12-2 0 7Z';
 const lerp=(a,b,t)=>a+(b-a)*t;
@@ -85,8 +84,7 @@ function drawStoryMap(ctx,w,h,f,focus,places,mob,col){
 function Story({t,theme}){
   // mob = phone sizes; stacked = map / photo / text in a column (phones and tablets in portrait).
   const s=t.story;const mob=useIsMobile(),stacked=useIsMobile(900);const n=s.beats.length;
-  const pics=[['photobooth.png','50% 30%'],['story-linh-cafe.jpg','50% 38%'],['story-cafe.jpg','50% 58%'],['story-seoul-selfie.jpg','50% 52%'],['campfire.png','45% 50%']];
-  const colors=theme==='traditional'?['--cinnabar-500','--gold-500','--cinnabar-500','--gold-500','--cinnabar-500']:['--marigold-500','--lotus-500','--jade-500','--hibiscus-500','--lacquer-500'];
+  const pics=[['photobooth.png','50% 30%'],['story-linh-cafe.jpg','50% 38%'],['story-seoul-selfie.jpg','50% 52%'],['campfire.png','45% 50%']];
   const sec=React.useRef(),card=React.useRef(),gapRef=React.useRef(),canvas=React.useRef();
   const photoEls=React.useRef([]),textEls=React.useRef([]),dotEls=React.useRef([]),stopEls=React.useRef([]),hint=React.useRef();
   const [navH,setNavH]=React.useState(80);
@@ -149,18 +147,17 @@ function Story({t,theme}){
     return()=>{ro.disconnect();removeEventListener('scroll',on);cancelAnimationFrame(raf)};
   },[mob,stacked,navH,n,s]);
   // Stacked layers: every beat sits in the same grid cell, only the current one is visible.
-  const photos=<div style={{display:'grid'}}>{s.beats.map(([y],i)=><div key={y} ref={el=>photoEls.current[i]=el} style={{gridArea:'1/1',width:'100%',maxWidth:stacked&&!mob?520:undefined,justifySelf:'center',...layerStyle(-1,i,false)}}>
+  const photos=<div style={{display:'grid'}}>{s.beats.map(([y],i)=><div key={i} ref={el=>photoEls.current[i]=el} style={{gridArea:'1/1',width:'100%',maxWidth:stacked&&!mob?520:undefined,justifySelf:'center',...layerStyle(-1,i,false)}}>
     <Photo label={y} src={pics[i][0]} pos={pics[i][1]} style={{height:mob?'min(280px, 23vh)':stacked?'min(380px, 32vh)':400,width:'100%',borderRadius:stacked?'var(--radius-lg)':'var(--radius-arch)',boxShadow:'var(--shadow-paper)'}}/>
   </div>)}</div>;
-  const texts=<div style={{display:'grid'}}>{s.beats.map(([y,ti,b],i)=><div key={y} ref={el=>textEls.current[i]=el} aria-hidden={i>0} style={{gridArea:'1/1',...layerStyle(-1,i,true),display:'grid',gap:mob?8:14,alignContent:stacked?'start':'center'}}>
-    <div style={{font:(y.length>4?'500 '+(mob?28:36)+'px/1.1':'500 '+(mob?40:56)+'px/1')+' var(--font-serif)',color:'var('+colors[i]+')'}}>{y}</div>
+  const texts=<div style={{display:'grid'}}>{s.beats.map(([ti,b],i)=><div key={i} ref={el=>textEls.current[i]=el} aria-hidden={i>0} style={{gridArea:'1/1',...layerStyle(-1,i,true),display:'grid',gap:mob?8:14,alignContent:stacked?'start':'center'}}>
     <h3 style={{margin:0,font:'var(--fs-display-sm)/1.2 var(--font-display)',color:'var(--text-strong)'}}>{ti}</h3>
-    <p style={{margin:0,font:'var(--fs-body-lg)/var(--lh-body) var(--font-serif)',color:'var(--text-body)',maxWidth:'42ch'}}>{b}</p>
+    <p style={{margin:0,font:mob?'16px/1.45 var(--font-serif)':'var(--fs-body-lg)/var(--lh-body) var(--font-serif)',color:'var(--text-body)',maxWidth:'42ch'}}>{b}</p>
   </div>)}</div>;
   // Progress dots (click = go to that moment) and a "scroll" hint shown before the story starts.
   const goTo=i=>{const el=stopEls.current[i];if(el)window.scrollTo({top:el.getBoundingClientRect().top+scrollY-navH,behavior:'smooth'});};
   const progress=<div style={{position:'absolute',left:0,right:0,bottom:mob?10:16,display:'flex',justifyContent:'center'}}>
-    <nav aria-label={s.progressLabel} style={{display:'flex',gap:6}}>{s.beats.map(([y],i)=><button key={y} ref={el=>dotEls.current[i]=el} onClick={()=>goTo(i)} aria-label={y} aria-current={i===0?'step':'false'}
+    <nav aria-label={s.progressLabel} style={{display:'flex',gap:6}}>{s.beats.map(([y],i)=><button key={i} ref={el=>dotEls.current[i]=el} onClick={()=>goTo(i)} aria-label={y} aria-current={i===0?'step':'false'}
       style={{width:i===0?22:8,height:8,padding:0,border:0,borderRadius:'var(--radius-pill)',background:'var(--text-strong)',opacity:i===0?1:.35,cursor:'pointer',transition:'width var(--dur-base) var(--ease-out), opacity var(--dur-base)'}}/>)}</nav>
   </div>;
   const map=<canvas ref={canvas} role="img" aria-label={s.mapLabel} style={{position:'absolute',inset:0,width:'100%',height:'100%'}}/>;
@@ -173,14 +170,14 @@ function Story({t,theme}){
       {s.scrollHint}<svg width="12" height="12" viewBox="0 0 12 12" className="lh-bob"><path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
     </div>
     <section ref={sec} style={{position:'relative',height:'calc('+(100+n*75)+'vh - '+navH+'px)',marginTop:mob?24:40}}>
-      {s.beats.map(([y],i)=><div key={y} ref={el=>stopEls.current[i]=el} aria-hidden="true" style={{position:'absolute',left:0,width:1,height:1,pointerEvents:'none',
+      {s.beats.map((_,i)=><div key={i} ref={el=>stopEls.current[i]=el} aria-hidden="true" style={{position:'absolute',left:0,width:1,height:1,pointerEvents:'none',
         top:'calc((100% - (100vh - '+navH+'px)) * '+((i+1)/n)+')',scrollSnapAlign:'start',scrollSnapStop:'always'}}/>)}
       <div style={{position:'sticky',top:navH,height:'calc(100vh - '+navH+'px)',display:'grid',alignItems:'center'}}>
         {stacked
           ?<div ref={card} style={{...cardStyle,height:'calc(100% - 16px)'}}>
             {map}
             <div style={{position:'absolute',inset:0,pointerEvents:'none',background:'linear-gradient(180deg,transparent 0%,transparent 24%,var(--paper-2) 40%)'}}/>
-            <div style={{position:'relative',height:'100%',display:'grid',gridTemplateRows:'clamp(100px,22vh,'+(mob?200:260)+'px) auto 1fr',gap:mob?10:20,padding:mob?12:28}}>
+            <div style={{position:'relative',height:'100%',display:'grid',gridTemplateRows:(mob?'clamp(90px,18vh,180px)':'clamp(100px,22vh,260px)')+' auto 1fr',gap:mob?10:20,padding:mob?12:28}}>
               <div ref={gapRef}/>{photos}{texts}
             </div>
             {progress}
