@@ -1,6 +1,6 @@
 function LangToggle({lang,setLang}){
   return <div role="group" aria-label="Language" style={{display:'flex',background:'var(--bg-alt)',borderRadius:'var(--radius-pill)',padding:3,gap:2}}>
-    {[['vi','VI'],['en','EN']].map(([k,l])=><button key={k} onClick={()=>setLang(k)} aria-pressed={lang===k} style={{height:36,minWidth:40,padding:'0 10px',border:0,borderRadius:'var(--radius-pill)',cursor:'pointer',font:'600 11px var(--font-sans)',letterSpacing:'.12em',background:lang===k?'var(--text-strong)':'transparent',color:lang===k?'var(--paper)':'var(--text-strong)',transition:'background var(--dur-fast) var(--ease-out)'}}>{l}</button>)}
+    {[['vi','VI'],['fr','FR']].map(([k,l])=><button key={k} onClick={()=>setLang(k)} aria-pressed={lang===k} style={{height:36,minWidth:40,padding:'0 10px',border:0,borderRadius:'var(--radius-pill)',cursor:'pointer',font:'600 11px var(--font-sans)',letterSpacing:'.12em',background:lang===k?'var(--text-strong)':'transparent',color:lang===k?'var(--paper)':'var(--text-strong)',transition:'background var(--dur-fast) var(--ease-out)'}}>{l}</button>)}
   </div>;
 }
 function useIsMobile(bp=720){

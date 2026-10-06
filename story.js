@@ -67,7 +67,7 @@ function drawStoryMap(ctx,w,h,f,focus,places,mob,col){
     ctx.globalAlpha=lit;ctx.beginPath();ctx.arc(px,py,6,0,6.2832);ctx.fillStyle=col.white;ctx.fill();ctx.lineWidth=2.5;ctx.strokeStyle=col.strong;ctx.stroke();
     const lx=px+(right?14:0),ly=py+(right?-2:26);ctx.textAlign=right?'left':'center';
     ctx.font='600 '+(mob?10:11)+'px "Be Vietnam Pro", system-ui, sans-serif';ctx.fillStyle=col.strong;ctx.fillText(city.toUpperCase(),lx,ly);
-    ctx.font='italic '+(mob?12:14)+'px "EB Garamond", Georgia, serif';ctx.fillStyle=col.muted;ctx.fillText(country,lx,ly+(mob?13:15));
+    ctx.font='italic '+(mob?12:14)+'px "Playfair Display", Georgia, serif';ctx.fillStyle=col.muted;ctx.fillText(country,lx,ly+(mob?13:15));
     ctx.globalAlpha=1;};
   pin('paris',v.lp,'b');pin('phuly',v.ll,'b');pin('seoul',v.ls,'r');
   const shape=(path,x,y,rot,s,fill)=>{ctx.save();ctx.translate(x,y);ctx.rotate(rot);ctx.scale(s,s);ctx.fillStyle=fill;ctx.fill(path);ctx.lineWidth=2/s;ctx.strokeStyle=col.white;ctx.stroke(path);ctx.restore();};
@@ -165,7 +165,7 @@ function Story({t,theme}){
   return <main style={{position:'relative',padding:mob?'56px 16px 64px':'80px 24px 96px'}}>
     <style>{'.lh-bob{animation:lhbob 1.4s var(--ease-out) infinite}@keyframes lhbob{50%{transform:translateY(3px)}}@media (prefers-reduced-motion:reduce){.lh-bob{animation:none}}'}</style>
     <div aria-hidden="true" style={{position:'absolute',top:0,left:0,width:1,height:1,scrollSnapAlign:'start'}}/>
-    <SectionHeading eyebrow={s.eyebrow} script={s.script} title={s.title}/>
+    <SectionHeading eyebrow={s.eyebrow} title={s.title}/>
     <div ref={hint} aria-hidden="true" style={{display:'flex',justifyContent:'center',alignItems:'center',gap:6,marginTop:mob?14:20,font:'600 11px var(--font-sans)',letterSpacing:'.14em',textTransform:'uppercase',color:'var(--text-muted)'}}>
       {s.scrollHint}<svg width="12" height="12" viewBox="0 0 12 12" className="lh-bob"><path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
     </div>

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Linh & Huy · 24–25.10.2026</title><meta name="description" content="Lễ thành hôn Lê Thanh Huy & Đỗ Trang Linh · Phủ Lý, 24–25/10/2026"><meta property="og:title" content="Linh & Huy · 24–25.10.2026"><meta property="og:image" content="studio-white.jpg">
+<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Linh & Huy · 24–25.10.2026</title><meta name="description" content="Lễ thành hôn Lê Thanh Huy & Đỗ Trang Linh · Phủ Lý, 24–25/10/2026"><meta property="og:title" content="Linh & Huy · 24–25.10.2026"><meta property="og:image" content="studio-white.jpg">
 <link rel="stylesheet" href="styles.css"><style>body{margin:0}</style>
 <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" integrity="sha384-DGyLxAyjq0f9SPpVevD6IgztCFlnMF6oW/XQGmfe+IsZ8TqEiDrcHkMLKI6fiB/Z" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" integrity="sha384-gTGxhz21lVGYNMcdJOyq01Edg0jhn/c22nsx0kyqP0TxaV5WVdsSH1fSDUf5YJj1" crossorigin="anonymous"></script>
@@ -17,7 +17,7 @@
 <script type="text/babel">
 function App(){
   const [page,setPage]=React.useState(localStorage.getItem('lh-page')||'home');
-  const [lang,setLangS]=React.useState(localStorage.getItem('lh-lang')||'vi');
+  const [lang,setLangS]=React.useState(()=>{const l=localStorage.getItem('lh-lang');return window.STRINGS[l]?l:'vi';});
   const go=p=>{setPage(p);localStorage.setItem('lh-page',p);window.scrollTo(0,0)};
   const setLang=l=>{setLangS(l);localStorage.setItem('lh-lang',l)};
   const [theme,setThemeS]=React.useState('colorful');

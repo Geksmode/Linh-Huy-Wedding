@@ -1,7 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Be+Vietnam+Pro:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap");
-/* Bright Sunlist (demo): digits are foundry watermarks — excluded via unicode-range so numerals fall back to EB Garamond */
-@font-face{font-family:"Bright Sunlist";src:url("BrightSunlist-Regular.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap;unicode-range:U+0000-002F,U+003A-10FFFF}
-@font-face{font-family:"Bright Sunlist";src:url("BrightSunlist-Italic.ttf") format("truetype");font-weight:400;font-style:italic;font-display:swap;unicode-range:U+0000-002F,U+003A-10FFFF}
+@import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap");
+/* 3 polices : First Encounter (seulement « Linh & Huy »), Playfair Display (titres et textes), Be Vietnam Pro (étiquettes, heures, boutons). */
 @font-face{font-family:"First Encounter";src:url("FirstEncounter.otf") format("opentype");font-weight:400;font-style:normal;font-display:swap}
 
 :root{
@@ -29,10 +27,10 @@
 }
 
 :root{
---font-display:"Bright Sunlist","EB Garamond",Georgia,serif;
---font-display-vi:"Playfair Display","EB Garamond",Georgia,serif;
---font-script:"First Encounter","EB Garamond",cursive;
---font-serif:"EB Garamond",Georgia,serif;
+--font-display:"Playfair Display",Georgia,serif;
+--font-display-vi:"Playfair Display",Georgia,serif;
+--font-script:"First Encounter","Playfair Display",cursive;
+--font-serif:"Playfair Display",Georgia,serif;
 --font-sans:"Be Vietnam Pro",system-ui,sans-serif;
 --fs-script-xl:128px;--fs-script-lg:88px;--fs-script-md:56px;
 --fs-display-xl:96px;--fs-display-lg:64px;--fs-display-md:44px;--fs-display-sm:32px;
@@ -72,7 +70,6 @@
 body{transition:background var(--dur-base);background:var(--bg-page);color:var(--text-body);font-family:var(--font-serif);font-size:var(--fs-body);line-height:var(--lh-body);-webkit-font-smoothing:antialiased}
 a{color:var(--accent-primary);text-underline-offset:3px}a:hover{color:var(--accent-primary-hover)}
 ::selection{background:var(--mango-300);color:var(--plum-ink)}
-/* Bright Sunlist demo lacks Vietnamese glyphs (Ơ, Ư, stacked tones) — set data-lang="vi" on <html> (or any wrapper) to swap the display face */
 [data-lang="vi"]{--font-display:var(--font-display-vi)}
 @media (max-width:640px){:root{--fs-script-xl:76px;--fs-script-lg:60px;--fs-script-md:42px;--fs-display-xl:56px;--fs-display-lg:40px;--fs-display-md:30px;--fs-display-sm:25px;--fs-body-lg:19px;--fs-body:17px}}
 html{-webkit-text-size-adjust:100%}img{max-width:100%}

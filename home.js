@@ -37,9 +37,9 @@ function Families({f,trad,mob}){
   return <section style={{padding:mob?'56px 20px':'80px 24px',display:'grid',gap:mob?28:36,justifyItems:'center'}}>
     <span style={lab}>{f.eyebrow}</span>
     <div style={{display:'grid',gap:4,justifyItems:'center',textAlign:'center',marginTop:-16}}>
-      <div style={{font:'var(--fs-script-md)/1.1 var(--font-script)',color:'var(--accent-primary)'}}>{f.groom}</div>
-      <div style={{font:'40px/1 var(--font-script)',color:'var(--accent-warm)'}}>&amp;</div>
-      <div style={{font:'var(--fs-script-md)/1.1 var(--font-script)',color:'var(--accent-primary)'}}>{f.bride}</div>
+      <div style={{font:'500 '+(mob?28:36)+'px/1.2 var(--font-display)',color:'var(--accent-primary)'}}>{f.groom}</div>
+      <div style={{font:'italic 400 28px/1 var(--font-display)',color:'var(--accent-warm)'}}>&amp;</div>
+      <div style={{font:'500 '+(mob?28:36)+'px/1.2 var(--font-display)',color:'var(--accent-primary)'}}>{f.bride}</div>
     </div>
     <div style={{width:'min(640px,100%)'}}><Divider variant={trad?'diamond':'dots'} color={trad?'var(--gold-300)':undefined}/></div>
     <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(min(240px,100%),1fr))',gap:mob?28:40,width:'min(720px,100%)'}}>

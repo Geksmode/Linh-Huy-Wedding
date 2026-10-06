@@ -2,7 +2,7 @@ function Schedule({go,t,theme}){
   const s=t.sched;const trad=theme==='traditional';const hues=trad?[['cinnabar','gold','cinnabar'],['cinnabar','gold','cinnabar','gold']]:[['lotus','marigold','terracotta'],['lacquer','hibiscus','marigold','jade']];const tones=['marigold','lotus'];const mob=useIsMobile();
   return <main>
     <section style={{padding:mob?'56px 16px 48px':'80px 24px 64px'}}>
-      <SectionHeading eyebrow={s.eyebrow} script={s.script} title={s.title}/>
+      <SectionHeading eyebrow={s.eyebrow} title={s.title}/>
       <div style={{margin:'28px auto 0',display:'grid',gap:6,justifyItems:'center',textAlign:'center'}}>
         <span style={{font:'600 11px var(--font-sans)',letterSpacing:'var(--ls-label)',textTransform:'uppercase',color:'var(--text-muted)'}}>{s.venueLabel}</span>
         <span style={{font:'500 var(--fs-body-lg) var(--font-serif)',color:'var(--text-strong)'}}>{s.venue}</span>
