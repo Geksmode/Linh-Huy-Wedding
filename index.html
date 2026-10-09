@@ -17,7 +17,7 @@
 <script type="text/babel">
 function App(){
   const [page,setPage]=React.useState(localStorage.getItem('lh-page')||'home');
-  const [lang,setLangS]=React.useState(()=>{const l=localStorage.getItem('lh-lang');return window.STRINGS[l]?l:'vi';});
+  const [lang,setLangS]=React.useState(()=>{const q=new URLSearchParams(location.search).get('lang');const l=window.STRINGS[q]?q:localStorage.getItem('lh-lang');return window.STRINGS[l]?l:'vi';});
   const go=p=>{setPage(p);localStorage.setItem('lh-page',p);window.scrollTo(0,0)};
   const setLang=l=>{setLangS(l);localStorage.setItem('lh-lang',l)};
   const [theme,setThemeS]=React.useState('colorful');
