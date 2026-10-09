@@ -10,5 +10,5 @@ Ce dossier est autonome : il contient tout ce dont le site a besoin.
 4. Après 1–2 minutes le site est en ligne : `https://<votre-utilisateur>.github.io/linh-huy-wedding/`
 
 ## Modifier
-- Textes VI / EN : `strings.js`
+- Textes VI / FR / EN (lien direct en anglais : `?lang=en`) : `strings.js`
 - URL Google Sheet : `config.js`
