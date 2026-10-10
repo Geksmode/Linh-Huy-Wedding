@@ -1,5 +1,5 @@
 function Schedule({go,t,theme}){
-  const s=t.sched;const trad=theme==='traditional';const hues=trad?[['cinnabar','gold','cinnabar'],['cinnabar','gold','cinnabar','gold']]:[['lotus','marigold','terracotta'],['lacquer','hibiscus','marigold','jade']];const tones=['marigold','lotus'];const mob=useIsMobile();
+  const s=t.sched;const trad=theme==='traditional';const hues=trad?[['cinnabar','gold','cinnabar'],['cinnabar','gold','cinnabar','gold']]:[['lotus','marigold','terracotta'],['lacquer','hibiscus','marigold','jade']];const mob=useIsMobile();
   return <main>
     <section style={{padding:mob?'56px 16px 48px':'80px 24px 64px'}}>
       <SectionHeading eyebrow={s.eyebrow} title={s.title}/>
@@ -32,12 +32,6 @@ function Schedule({go,t,theme}){
           </ol>
         </div>)}
       </div>
-    </section>
-    <section style={{background:trad?'var(--cinnabar-700)':'var(--plum-night)',padding:mob?'56px 20px':'72px 24px',textAlign:'center',display:'grid',gap:24,justifyItems:'center'}}>
-      <SectionHeading tone="inverse" eyebrow={s.dressEyebrow} title={s.dressTitle}/>
-      <p style={{margin:0,maxWidth:'var(--measure)',font:'var(--fs-body-lg)/var(--lh-body) var(--font-serif)',color:'var(--paper)'}}>{s.dressBody}</p>
-      <div style={{display:'flex',gap:8,flexWrap:'wrap',justifyContent:'center'}}>{s.badges.map((b,i)=><Badge key={b} tone={tones[i]}>{b}</Badge>)}</div>
-      <Button variant="sun" onClick={()=>go('rsvp')}>{s.cta}</Button>
     </section>
   </main>;
 }
