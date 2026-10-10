@@ -20,8 +20,8 @@ function Home({go,t,theme}){
     </section>
     <section style={{padding:mob?'0 16px 64px':'0 24px 96px'}}>
       <div style={{maxWidth:'var(--content-max)',margin:'0 auto',display:'grid',gridTemplateColumns:mob?'1fr 1fr':'repeat(6,1fr)',gap:mob?12:20}}>
-        {[['prewedding-5.jpg','50% 20%','arch'],['prewedding-1.jpg','50% 45%','lg'],['prewedding-2.jpg','40% 55%','arch'],['prewedding-3.jpg','50% 40%','lg'],['prewedding-4.jpg','60% 75%','lg']].map(([src,pos,r],i)=>
-          <Photo key={src} label={h.photos[i]} src={src} pos={pos} style={{gridColumn:mob?(i===0?'span 2':'span 1'):(i<3?'span 2':'span 3'),height:mob?(i===0?420:260):(i<3?460:520),borderRadius:'var(--radius-'+r+')'}}/>)}
+        {[['prewedding-6.jpg','50% 72%','arch','135%'],['prewedding-1.jpg','50% 45%','lg'],['prewedding-2.jpg','40% 55%','arch'],['prewedding-3.jpg','50% 40%','lg'],['prewedding-4.jpg','60% 75%','lg']].map(([src,pos,r,zoom],i)=>
+          <Photo key={src} label={h.photos[i]} src={src} pos={pos} style={{...(zoom&&{backgroundSize:zoom}),gridColumn:mob?(i===0?'span 2':'span 1'):(i<3?'span 2':'span 3'),height:mob?(i===0?420:260):(i<3?460:520),borderRadius:'var(--radius-'+r+')'}}/>)}
       </div>
     </section>
   </main>;
