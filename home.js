@@ -19,10 +19,9 @@ function Home({go,t,theme}){
       <Countdown date="2026-10-24T15:00:00+07:00" labels={h.units}/>
     </section>
     <section style={{padding:mob?'0 16px 64px':'0 24px 96px'}}>
-      <div style={{maxWidth:'var(--content-max)',margin:'0 auto',display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(min(260px,100%),1fr))',gap:mob?14:20}}>
-        <Photo label={h.photos[0]} src="studio-white.jpg" pos="50% 25%" style={{height:mob?360:420,borderRadius:'var(--radius-arch)'}}/>
-        <Photo label={h.photos[1]} src="vogue-hearts.jpg" pos="50% 40%" style={{height:mob?360:420,borderRadius:'var(--radius-lg)'}}/>
-        <Photo label={h.photos[2]} src="candlelight.jpg" pos="50% 45%" style={{height:mob?360:420,borderRadius:'var(--radius-arch)'}}/>
+      <div style={{maxWidth:'var(--content-max)',margin:'0 auto',display:'grid',gridTemplateColumns:mob?'1fr 1fr':'repeat(6,1fr)',gap:mob?12:20}}>
+        {[['prewedding-6.jpg','50% 72%','arch','135%'],['prewedding-1.jpg','50% 45%','lg'],['prewedding-2.jpg','40% 55%','arch'],['prewedding-3.jpg','50% 40%','lg'],['prewedding-4.jpg','60% 75%','lg']].map(([src,pos,r,zoom],i)=>
+          <Photo key={src} label={h.photos[i]} src={src} pos={pos} style={{...(zoom&&{backgroundSize:zoom}),gridColumn:mob?(i===0?'span 2':'span 1'):(i<3?'span 2':'span 3'),height:mob?(i===0?420:260):(i<3?460:520),borderRadius:'var(--radius-'+r+')'}}/>)}
       </div>
     </section>
   </main>;
