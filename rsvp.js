@@ -9,7 +9,7 @@ function Rsvp({go,t,lang}){
     e.preventDefault();
     if(!f.name.trim()){setNameErr(r.nameReq);return;}
     setNameErr('');setStatus('sending');
-    const row={timestamp:new Date().toISOString(),name:f.name.trim(),email:f.email.trim(),attending:yes?'yes':'no',partySize:yes?f.party:'',events:yes?f.events.join(', '):'',phone:f.phone.trim(),transport:yes?f.transport:'',busTrip:yes&&f.transport==='bus'?f.busTrip:'',note:f.note.trim(),lang};
+    const row={timestamp:new Date().toISOString(),name:f.name.trim(),email:f.email.trim(),attending:yes?'yes':'no',partySize:yes?f.party:'',events:yes?f.events.join(', '):'',phone:f.phone.trim(),transport:yes&&r.transport?f.transport:'',busTrip:yes&&f.transport==='bus'?f.busTrip:'',note:f.note.trim(),lang};
     try{
       if(window.RSVP_ENDPOINT){
         await fetch(window.RSVP_ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(row)});
@@ -27,13 +27,13 @@ function Rsvp({go,t,lang}){
       {yes&&<>
         <Select label={r.party} options={r.partyOpts} value={f.party} onChange={set('party')}/>
         <ChoiceGroup label={r.events} layout="list" multiple options={r.eventOpts} value={f.events} onChange={set('events')}/>
-        <div style={{display:'grid',gap:12}}>
+        {r.transport&&<div style={{display:'grid',gap:12}}>
           <ChoiceGroup label={r.transport} options={[{value:'self',label:r.transportOpts[0]},{value:'bus',label:r.transportOpts[1]}]} value={f.transport} onChange={set('transport')}/>
           <ul style={{margin:0,padding:'12px 16px 12px 32px',borderRadius:'var(--radius-md)',background:'var(--paper)',boxShadow:'inset 0 0 0 1px var(--sand)',font:'400 15px/1.5 var(--font-sans)',color:'var(--text-muted)',display:'grid',gap:4}}>
             {r.transportInfo.map(l=><li key={l}>{l}</li>)}
           </ul>
-        </div>
-        {f.transport==='bus'&&<ChoiceGroup label={r.busTrip} layout="list" options={[{value:'outbound',label:r.busOpts[0]},{value:'return',label:r.busOpts[1]},{value:'both',label:r.busOpts[2]}]} value={f.busTrip} onChange={set('busTrip')}/>}
+        </div>}
+        {r.transport&&f.transport==='bus'&&<ChoiceGroup label={r.busTrip} layout="list" options={[{value:'outbound',label:r.busOpts[0]},{value:'return',label:r.busOpts[1]},{value:'both',label:r.busOpts[2]}]} value={f.busTrip} onChange={set('busTrip')}/>}
       </>}
       <TextField label={r.note} multiline rows={3} placeholder={r.optional} value={f.note} onChange={set('note')}/>
       {status==='error'&&<div style={{font:'400 15px var(--font-sans)',color:'var(--danger)'}}>{r.err}</div>}
