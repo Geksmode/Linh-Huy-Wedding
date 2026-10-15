@@ -1,6 +1,6 @@
 function Rsvp({go,t,lang}){
   const r=t.rsvp;const mob=useIsMobile();
-  const [f,setF]=React.useState({name:'',email:'',attending:'y',party:r.partyOpts[0],events:[],note:''});
+  const [f,setF]=React.useState({name:'',email:'',phone:'',transport:'',busTrip:'both',attending:'y',party:r.partyOpts[0],events:[],note:''});
   const set=k=>v=>setF(p=>({...p,[k]:v&&v.target?v.target.value:v}));
   const [status,setStatus]=React.useState('idle');
   const [nameErr,setNameErr]=React.useState('');
@@ -9,7 +9,7 @@ function Rsvp({go,t,lang}){
     e.preventDefault();
     if(!f.name.trim()){setNameErr(r.nameReq);return;}
     setNameErr('');setStatus('sending');
-    const row={timestamp:new Date().toISOString(),name:f.name.trim(),email:f.email.trim(),attending:yes?'yes':'no',partySize:yes?f.party:'',events:yes?f.events.join(', '):'',note:f.note.trim(),lang};
+    const row={timestamp:new Date().toISOString(),name:f.name.trim(),email:f.email.trim(),attending:yes?'yes':'no',partySize:yes?f.party:'',events:yes?f.events.join(', '):'',phone:f.phone.trim(),transport:yes?f.transport:'',busTrip:yes&&f.transport==='bus'?f.busTrip:'',note:f.note.trim(),lang};
     try{
       if(window.RSVP_ENDPOINT){
         await fetch(window.RSVP_ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(row)});
@@ -22,10 +22,18 @@ function Rsvp({go,t,lang}){
     <form onSubmit={submit} style={{maxWidth:560,margin:(mob?28:40)+'px auto 0',background:'var(--surface-card)',borderRadius:'var(--radius-lg)',boxShadow:'var(--shadow-paper)',padding:mob?'24px 18px':'36px 32px',display:'grid',gap:22}}>
       <TextField label={r.name} placeholder="Nguyễn Thị Mai" value={f.name} onChange={set('name')} error={nameErr||undefined}/>
       <TextField label={r.email} type="email" placeholder="mai@example.com" value={f.email} onChange={set('email')}/>
+      <TextField label={r.phone} type="tel" placeholder={r.optional} value={f.phone} onChange={set('phone')}/>
       <ChoiceGroup label={r.attend} options={[{value:'y',label:r.yes},{value:'n',label:r.no}]} value={f.attending} onChange={set('attending')}/>
       {yes&&<>
         <Select label={r.party} options={r.partyOpts} value={f.party} onChange={set('party')}/>
         <ChoiceGroup label={r.events} layout="list" multiple options={r.eventOpts} value={f.events} onChange={set('events')}/>
+        <div style={{display:'grid',gap:12}}>
+          <ChoiceGroup label={r.transport} options={[{value:'self',label:r.transportOpts[0]},{value:'bus',label:r.transportOpts[1]}]} value={f.transport} onChange={set('transport')}/>
+          <ul style={{margin:0,padding:'12px 16px 12px 32px',borderRadius:'var(--radius-md)',background:'var(--paper)',boxShadow:'inset 0 0 0 1px var(--sand)',font:'400 15px/1.5 var(--font-sans)',color:'var(--text-muted)',display:'grid',gap:4}}>
+            {r.transportInfo.map(l=><li key={l}>{l}</li>)}
+          </ul>
+        </div>
+        {f.transport==='bus'&&<ChoiceGroup label={r.busTrip} layout="list" options={[{value:'outbound',label:r.busOpts[0]},{value:'return',label:r.busOpts[1]},{value:'both',label:r.busOpts[2]}]} value={f.busTrip} onChange={set('busTrip')}/>}
       </>}
       <TextField label={r.note} multiline rows={3} placeholder={r.optional} value={f.note} onChange={set('note')}/>
       {status==='error'&&<div style={{font:'400 15px var(--font-sans)',color:'var(--danger)'}}>{r.err}</div>}
