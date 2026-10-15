@@ -29,9 +29,10 @@ function Rsvp({go,t,lang}){
         <ChoiceGroup label={r.events} layout="list" multiple options={r.eventOpts} value={f.events} onChange={set('events')}/>
         {r.transport&&<div style={{display:'grid',gap:12}}>
           <ChoiceGroup label={r.transport} options={[{value:'self',label:r.transportOpts[0]},{value:'bus',label:r.transportOpts[1]}]} value={f.transport} onChange={set('transport')}/>
-          <ul style={{margin:0,padding:'12px 16px 12px 32px',borderRadius:'var(--radius-md)',background:'var(--paper)',boxShadow:'inset 0 0 0 1px var(--sand)',font:'400 15px/1.5 var(--font-sans)',color:'var(--text-muted)',display:'grid',gap:4}}>
-            {r.transportInfo.map(l=><li key={l}>{l}</li>)}
-          </ul>
+          <div style={{padding:'12px 16px',borderRadius:'var(--radius-md)',background:'var(--paper)',boxShadow:'inset 0 0 0 1px var(--sand)',font:'400 15px/1.5 var(--font-sans)',color:'var(--text-muted)'}}>
+            <p style={{margin:0}}>{r.transportInfo[0]}</p>
+            <ul style={{margin:'4px 0 0',paddingLeft:20}}>{r.transportInfo.slice(1).map(l=><li key={l}>{l}</li>)}</ul>
+          </div>
         </div>}
         {r.transport&&f.transport==='bus'&&<ChoiceGroup label={r.busTrip} layout="list" options={[{value:'outbound',label:r.busOpts[0]},{value:'return',label:r.busOpts[1]},{value:'both',label:r.busOpts[2]}]} value={f.busTrip} onChange={set('busTrip')}/>}
       </>}
