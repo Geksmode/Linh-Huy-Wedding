@@ -12,3 +12,7 @@ Ce dossier est autonome : il contient tout ce dont le site a besoin.
 ## Modifier
 - Textes VI / FR / EN (lien direct en anglais : `?lang=en`) : `strings.js`
 - URL Google Sheet : `config.js`
+
+## Guides invités (PDF)
+- Contenu : `guides/content.js` (FR / EN, un guide par cérémonie)
+- Régénérer : `node guides/build.js` (Playwright + Chromium)
