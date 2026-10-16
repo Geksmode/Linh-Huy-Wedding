@@ -64,7 +64,7 @@ fr: {
         you: 'Profitez-en pour féliciter les fiancés : « Chúc mừng ! »' },
       { time: '16:30', title: 'Réception',
         what: 'Un repas de fête est servi. Les plats sont posés au centre de la table et partagés.',
-        you: 'Voir « À table » plus bas. N’hésitez pas à goûter un peu de tout.' },
+        you: 'Voir « À table » au recto. N’hésitez pas à goûter un peu de tout.' },
     ],
   },
   {
@@ -72,7 +72,7 @@ fr: {
     dayLabel: 'Dimanche 25 octobre 2026',
     title: 'Le mariage',
     viTitle: 'Lễ Vu Quy',
-    intro: '« Vu quy » signifie littéralement « la jeune fille rejoint la maison de son époux ». Cette cérémonie, chez la famille de la mariée, marque le moment où Linh dit au revoir à ses ancêtres et à ses parents pour fonder un foyer avec Huy. La famille du marié vient « accueillir la mariée » ; c’est un moment chargé d’émotion, suivi d’un grand repas de fête.',
+    intro: '« Vu quy » signifie littéralement « la jeune fille rejoint la maison de son époux ». Cette cérémonie, chez la famille de la mariée, marque le moment où Linh dit au revoir à ses ancêtres et à ses parents pour fonder un foyer avec Huy. C’est un moment chargé d’émotion, suivi d’un grand repas de fête.',
     essentials: [
       ['Arrivée', '9 h 00 à la maison — la cérémonie commence à 10 h 00'],
       ['Durée', 'Environ 40 minutes de cérémonie, puis la réception à partir de 10 h 40'],
@@ -80,7 +80,7 @@ fr: {
       ['Cadeau', 'Rien à apporter ni à donner ce jour-là'],
     ],
     symbolTitle: 'L’autel des ancêtres',
-    symbol: 'Dans chaque maison vietnamienne, l’autel des ancêtres occupe la place d’honneur. Avant de quitter sa famille, la mariée vient y annoncer son mariage et remercier ceux qui l’ont précédée : c’est le cœur spirituel de la journée.',
+    symbol: 'Il occupe la place d’honneur de chaque maison vietnamienne. Avant de quitter sa famille, la mariée vient y annoncer son mariage à ses aïeux : c’est le cœur spirituel de la journée.',
     routes: { title: 'Comment venir dimanche ?', items: [
       ['Vous venez de Hanoï', 'Car organisé (sur réservation) : départ 7 h 45 à Keangnam (Phạm Hùng), retour à 14 h 00 depuis Phủ Lý.'],
       ['Vous êtes déjà à Phủ Lý', 'Pas de car : rendez-vous directement à 9 h 00 à la maison de la famille de la mariée, 550 rue Trần Hưng Đạo.'],
