@@ -181,7 +181,7 @@ function Photos({t,lang}){
         </ul>
         {staged>0&&items.some(i=>i.status==='tooBig')&&<div style={{font:'400 14px/1.5 var(--font-sans)',color:'var(--danger)'}}>{p.tooBig(PHOTO_MAX_MB)}</div>}
         {/* Sticky so the send button stays in reach on a phone while photos are added. */}
-        {staged>0&&!busy&&<div style={{position:'sticky',bottom:12,zIndex:2,borderRadius:'var(--radius-pill)',boxShadow:'var(--shadow-lift)'}}><Button size="lg" fullWidth onClick={send}>{p.send(staged)}</Button></div>}
+        {staged>0&&!busy&&<div style={{position:'sticky',bottom:'calc(12px + var(--bottom-nav, 0px))',zIndex:2,borderRadius:'var(--radius-pill)',boxShadow:'var(--shadow-lift)'}}><Button size="lg" fullWidth onClick={send}>{p.send(staged)}</Button></div>}
         {!busy&&!staged&&failed>0&&<div style={{display:'grid',gap:10,justifyItems:'center',textAlign:'center'}}>
           <span style={{font:'400 14px/1.5 var(--font-sans)',color:'var(--danger)'}}>{p.err}</span>
           <Button size="sm" onClick={retry}>{p.retry}</Button>
