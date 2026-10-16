@@ -14,12 +14,12 @@ Ce dossier est autonome : il contient tout ce dont le site a besoin.
 - URL Google Sheet : `config.js`
 
 ## Photos des invités (page `?page=photos` + QR code)
-Les invités scannent le QR code → page « Photos » → leurs photos/vidéos (30 Mo max. par fichier) arrivent dans un dossier Google Drive.
+Les invités scannent le QR code → page « Photos » → leurs photos/vidéos (30 Mo max. par fichier) arrivent dans un dossier Google Drive. Les photos sont réduites sur le téléphone avant l'envoi (3000 px max., JPEG qualité 88 %) pour aller vite en 4G ; les vidéos sont envoyées telles quelles.
 1. Ouvrez le projet Apps Script lié au Google Sheet RSVP et remplacez le code par `apps-script/Code.gs`.
    - Optionnel : mettez l'ID d'un dossier Drive existant dans `PHOTO_FOLDER_ID`. Sinon, un dossier « Linh & Huy — Photos » est créé dans votre Drive au premier envoi.
 2. **Déployer → Gérer les déploiements → ✏️ → Version : Nouvelle version → Déployer**, puis acceptez l'accès à Google Drive. L'URL ne change pas, `config.js` reste identique.
    - ⚠️ Tant que ce redéploiement n'est pas fait, les envois de photos créent des lignes vides dans le Sheet RSVP.
-   - Sous le formulaire, la page affiche les 6 derniers envois (un groupe = les photos envoyées en une fois par un invité), lus directement dans le dossier Drive : supprimer une photo du Drive la retire de l'album (sous 30 s), et les photos ajoutées à la main au dossier y apparaissent aussi. Pour que les miniatures s'affichent, ces photos sont partagées « tout le monde avec le lien » en lecture.
+   - Sous le formulaire, la page affiche les 6 derniers envois (un groupe = les photos envoyées en une fois par un invité), lus directement dans le dossier Drive : supprimer une photo du Drive la retire de l'album (sous 30 s), et les photos ajoutées à la main au dossier y apparaissent aussi. Pour que les miniatures s'affichent, le dossier est partagé « tout le monde avec le lien » en lecture (les photos en héritent).
    - Ne modifiez pas la description des fichiers (« Envoyé par … · envoi … ») : elle sert à regrouper les photos d'un même envoi.
    - Après chaque modification du script : **Gérer les déploiements → ✏️ → Nouvelle version** (et non « Nouveau déploiement », qui change l'URL de `config.js`).
 3. QR code : `photos-qr.png` (pointe vers `https://geksmode.github.io/Linh-Huy-Wedding/?page=photos`). Cartes de table prêtes à imprimer : `photos-qr-cards.pdf` (4 par A4), ou `qr-photos.html` → Ctrl+P.

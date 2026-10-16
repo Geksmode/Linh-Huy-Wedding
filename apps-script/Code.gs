@@ -16,6 +16,7 @@ const LOOSE_GAP_MS = 10 * 60 * 1000;
 // Run this once from the editor (▷ Exécuter) to grant Drive access and create the photo folder.
 function autoriser() {
   Logger.log('Dossier photos : ' + photoFolder().getUrl());
+  shareFolderOnce();
   Logger.log('Derniers fichiers : ' + listRecentFiles().length);
 }
 
@@ -56,8 +57,8 @@ function savePhoto(data) {
     // The description keeps who sent it and the upload group, read back by doGet.
     const batch = String(data.batch || file.getId()).replace(/[^\w-]/g, '').slice(0, 40);
     file.setDescription((data.guest ? 'Envoyé par ' + data.guest + ' · envoi ' : 'Envoi ') + batch);
-    // Viewable by link so the photos page can show thumbnails; an upload still succeeds if the domain forbids it.
-    shareByLink(file);
+    // Thumbnails need link access: shared once on the folder, inherited by every file (no extra call per photo).
+    shareFolderOnce();
     CacheService.getScriptCache().remove('recent');
     return json({ ok: true, id: file.getId() });
   } catch (err) {
@@ -65,6 +66,14 @@ function savePhoto(data) {
   }
 }
 
+function shareFolderOnce() {
+  const props = PropertiesService.getScriptProperties();
+  if (props.getProperty('folderShared')) return;
+  shareByLink(photoFolder());
+  props.setProperty('folderShared', '1');
+}
+
+// Viewable by link so the photos page can show thumbnails; an upload still succeeds if the domain forbids it.
 function shareByLink(file) {
   try {
     if (file.getSharingAccess() !== DriveApp.Access.ANYONE_WITH_LINK) file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
