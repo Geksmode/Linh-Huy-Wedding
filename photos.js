@@ -2,12 +2,29 @@
 // a Drive folder; GET ?action=recent returns the latest groups (one group = one selection by a guest).
 // Reached from the QR code on the tables (qr-photos.html → ?page=photos).
 const PHOTO_MAX_MB=30;
+// Photos are resized on the phone before upload (about 8 MB → 1 MB): much faster on the venue's mobile data.
+const PHOTO_MAX_PX=3000,PHOTO_QUALITY=.88;
 const driveThumb=(id,w)=>'https://drive.google.com/thumbnail?id='+id+'&sz=w'+w;
 const AVATAR_HUES=['lotus','marigold','jade','hibiscus','terracotta','lacquer'];
 function readBase64(file){
   return new Promise((ok,ko)=>{const fr=new FileReader();fr.onload=()=>ok(String(fr.result).split(',')[1]);fr.onerror=()=>ko(fr.error);fr.readAsDataURL(file);});
 }
+// JPEG/PNG/WebP only; anything the browser can't decode (HEIC outside Safari) or videos are sent as they are.
+async function shrinkPhoto(file){
+  if(!/^image\/(jpeg|png|webp)$/.test(file.type)||!window.createImageBitmap) return file;
+  try{
+    const bmp=await createImageBitmap(file);
+    const scale=Math.min(1,PHOTO_MAX_PX/Math.max(bmp.width,bmp.height));
+    if(scale===1&&file.size<1.5e6){bmp.close();return file;}
+    const c=document.createElement('canvas');c.width=Math.round(bmp.width*scale);c.height=Math.round(bmp.height*scale);
+    const ctx=c.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);ctx.drawImage(bmp,0,0,c.width,c.height);bmp.close();
+    const blob=await new Promise(r=>c.toBlob(r,'image/jpeg',PHOTO_QUALITY));
+    if(!blob||blob.size>=file.size) return file;
+    return new File([blob],file.name.replace(/\.[^.]+$/,'')+'.jpg',{type:'image/jpeg'});
+  }catch(err){console.warn('resize skipped',err);return file;}
+}
 async function sendPhoto(file,guest,lang,batch){
+  file=await shrinkPhoto(file);
   const body=JSON.stringify({type:'photo',name:file.name||'photo.jpg',mime:file.type,guest,lang,batch,data:await readBase64(file)});
   if(!window.RSVP_ENDPOINT){console.warn('Photo demo mode — set window.RSVP_ENDPOINT in config.js',file.name);await new Promise(r=>setTimeout(r,600));return 'demo-'+Math.random();}
   const res=await fetch(window.RSVP_ENDPOINT,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body});
@@ -96,14 +113,14 @@ function Photos({t,lang}){
   const failed=items.filter(i=>i.status==='error').length;
   const patch=(id,v)=>setItems(l=>l.map(i=>i.id===id?{...i,...v}:i));
   async function run(list){
-    // Two uploads at a time: fast enough on mobile data without saturating it.
+    // Three uploads at a time: fast on mobile data without saturating it.
     const queue=[...list];
     const worker=async()=>{for(let it;(it=queue.shift());){
       patch(it.id,{status:'sending'});
       try{const id=await sendPhoto(it.file,guest.trim(),lang,it.batch);if(it.url)local.current[id]=it.url;patch(it.id,{status:'done'});}
       catch(err){console.error(err);patch(it.id,{status:'error'});}
     }};
-    await Promise.all([worker(),worker()]);
+    await Promise.all([worker(),worker(),worker()]);
     load();
   }
   // Photos are first staged (the guest can add several times and remove some), then sent together as one group.
