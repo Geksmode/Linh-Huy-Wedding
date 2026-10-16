@@ -10,7 +10,7 @@ function useIsMobile(bp=720){
   return m;
 }
 function Nav({page,go,t,lang,setLang}){
-  const items=['home','story','schedule'];const mob=useIsMobile();
+  const items=['home','story','schedule','photos'];const mob=useIsMobile();
   const link=k=><button key={k} onClick={()=>go(k)} style={{background:'none',border:0,padding:mob?'12px 4px':'6px 0',cursor:'pointer',font:'600 '+(mob?11:12)+'px var(--font-sans)',letterSpacing:mob?'.14em':'var(--ls-label)',textTransform:'uppercase',whiteSpace:'nowrap',color:page===k?'var(--accent-primary)':'var(--text-strong)',borderBottom:'2px solid '+(page===k?'var(--accent-primary)':'transparent')}}>{t.nav[k]}</button>;
   if(mob) return <header style={{position:'sticky',top:0,zIndex:10,background:'color-mix(in srgb, var(--bg-page) 94%, transparent)',backdropFilter:'blur(8px)',borderBottom:'1px solid var(--sand)'}}>
     <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:10,padding:'10px 16px 0'}}>

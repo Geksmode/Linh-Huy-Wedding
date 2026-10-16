@@ -1,0 +1,26 @@
+<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Linh & Huy · QR photos</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg"><link rel="stylesheet" href="styles.css">
+<!-- Printable table card (A6 ×4 on A4) pointing to ?page=photos. Print: Ctrl+P, no margins. -->
+<style>
+@page{size:A4;margin:0}
+body{margin:0;background:var(--paper)}
+.sheet{width:210mm;height:297mm;margin:0 auto;display:grid;grid-template:1fr 1fr/1fr 1fr}
+.card{box-sizing:border-box;display:grid;align-content:center;justify-items:center;gap:3mm;padding:8mm;text-align:center;border:.2mm dashed var(--sand);background:var(--paper)}
+.script{font:15mm/1 var(--font-script);color:var(--accent-primary);white-space:nowrap}
+.label{font:600 3mm var(--font-sans);letter-spacing:var(--ls-label);text-transform:uppercase;color:var(--accent-primary)}
+.title{font:7mm/1.15 var(--font-display);color:var(--text-strong)}
+.sub{font:italic 3.6mm/1.4 var(--font-serif);color:var(--text-muted)}
+.qr{width:52mm;height:52mm;background:#fff;border-radius:3mm;padding:2mm}
+@media print{.card{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style></head><body>
+<div class="sheet">
+<template id="c"><div class="card">
+  <div class="script">Linh &amp; Huy</div>
+  <div class="label">Chia sẻ ảnh · Partagez vos photos</div>
+  <img class="qr" src="photos-qr.png" alt="QR code">
+  <div class="title">Quét mã để gửi ảnh của bạn</div>
+  <div class="sub">Scannez pour nous envoyer vos photos · Scan to share your photos</div>
+</div></template>
+</div>
+<script>const s=document.querySelector('.sheet'),c=document.getElementById('c');for(let i=0;i<4;i++)s.appendChild(c.content.cloneNode(true));</script>
+</body></html>
