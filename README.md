@@ -14,5 +14,5 @@ Ce dossier est autonome : il contient tout ce dont le site a besoin.
 - URL Google Sheet : `config.js`
 
 ## Guides invités (PDF)
-- Contenu : `guides/content.js` (FR / EN, un guide par cérémonie)
+- Contenu : `guides/content.js` (un guide par cérémonie)
 - Régénérer : `node guides/build.js` (Playwright + Chromium)

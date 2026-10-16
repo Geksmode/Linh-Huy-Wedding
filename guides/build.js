@@ -52,7 +52,17 @@ li:last-child .rail:before{display:none}
 .ev p{margin:0;font-size:9.5pt;line-height:1.5}
 .ev .you{margin-top:5px;background:var(--jade-50);border-radius:6px;padding:5px 9px;color:#1D5A44}
 .ev .you b{font:600 7pt "Be Vietnam Pro",sans-serif;letter-spacing:.16em;text-transform:uppercase;margin-right:6px}
-.boxes{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.opt .ev{border:1.5px dashed var(--sand);border-radius:10px;padding:8px 11px 9px;margin-bottom:13px}
+.opt .t{color:var(--muted)}.opt .rail:after{background:#fff;box-shadow:0 0 0 2px var(--c) inset,0 0 0 3px #fff}
+.tag{display:inline-block;font:600 7pt "Be Vietnam Pro",sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#fff;background:var(--muted);border-radius:20px;padding:2px 8px;margin-bottom:4px}
+.routes{margin-top:14px;break-inside:avoid}
+.routes h4{margin:0 0 6px;font:500 12pt "Playfair Display",serif;color:var(--ink)}
+.routes>div{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.routes>div>div{border:1.5px solid var(--sand);border-radius:10px;padding:9px 12px}
+.routes>div>div:first-child{border-style:dashed}
+.routes b{display:block;font:600 8pt "Be Vietnam Pro",sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--lacquer);margin-bottom:2px}
+.routes p{margin:0;font-size:9.5pt;line-height:1.45;color:var(--ink)}
+.boxes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:6px}
 .box{border:1px solid var(--sand);border-radius:12px;padding:12px 14px;break-inside:avoid;background:#fff}
 .box h4{margin:0 0 6px;font:500 12pt "Playfair Display",serif;color:var(--ink)}
 .box ul{margin:0;padding-left:15px;font-size:9pt;line-height:1.45}
@@ -71,10 +81,10 @@ const hues = ['#C8322B', '#F2A33A', '#EE7A8E', '#2F8466', '#B8893B'];
 
 function render(lang, day, idx) {
   const c = lang.common, s = lang.sides;
-  const sides = idx === 0 ? [s.table, s.codes, s.weather] : [s.gift, s.table, s.codes, s.weather];
-  const steps = day.steps.map((st, i) => `<li style="--c:${hues[i % hues.length]}">
+  const sides = [s.table, s.codes, s.weather];
+  const steps = day.steps.map((st, i) => `<li class="${st.optional ? 'opt' : ''}" style="--c:${hues[i % hues.length]}">
     <div class="t${st.time ? '' : ' soft'}">${st.time ? esc(st.time) : '·'}</div><div class="rail"></div>
-    <div class="ev"><h3>${esc(st.title)}</h3><p>${esc(st.what)}</p>
+    <div class="ev">${st.optional ? `<span class="tag">${esc(st.optional)}</span>` : ''}<h3>${esc(st.title)}</h3><p>${esc(st.what)}</p>
     <p class="you"><b>${esc(c.yourPart)}</b>${esc(st.you)}</p></div></li>`).join('');
   return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(c.brand)} · ${esc(day.title)}</title><style>${css}</style></head><body>
   <section class="cover">
@@ -87,6 +97,7 @@ function render(lang, day, idx) {
   <p class="intro">${esc(day.intro)}</p>
   <div class="ess">${day.essentials.map(([k, v]) => `<div><b>${esc(k)}</b><p>${esc(v)}</p></div>`).join('')}</div>
   <div class="symbol"><b>${esc(day.symbolTitle)}</b> — ${esc(day.symbol)}</div>
+  ${day.routes ? `<div class="routes"><h4>${esc(day.routes.title)}</h4><div>${day.routes.items.map(([k, v]) => `<div><b>${esc(k)}</b><p>${esc(v)}</p></div>`).join('')}</div></div>` : ''}
   <h2><small class="label">${esc(day.dayLabel)}</small>${esc(c.whatHappens)}</h2>
   <ol class="tl">${steps}</ol>
   <div class="boxes">${sides.map(b => `<div class="box"><h4>${esc(b.title)}</h4><ul>${b.items.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>`).join('')}</div>
