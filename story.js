@@ -88,7 +88,9 @@ function Story({t,theme}){
   const sec=React.useRef(),card=React.useRef(),gapRef=React.useRef(),canvas=React.useRef();
   const photoEls=React.useRef([]),textEls=React.useRef([]),dotEls=React.useRef([]),stopEls=React.useRef([]),hint=React.useRef();
   const [navH,setNavH]=React.useState(80);
-  React.useEffect(()=>{const hd=document.querySelector('header');if(hd)setNavH(hd.offsetHeight)},[mob,stacked]);
+  // Visible height = viewport minus the top header and, on phones, the bottom tab bar.
+  const [barH,setBarH]=React.useState(0);
+  React.useEffect(()=>{const hd=document.querySelector('header'),tb=document.querySelector('.lh-tabs');if(hd)setNavH(hd.offsetHeight);setBarH(tb?tb.offsetHeight:0)},[mob,stacked]);
   // One scroll-snap stop per moment (scroll-snap-stop: always), so a fast flick still stops at the next
   // moment instead of skipping several. The footer is the last stop so the end of the page stays reachable.
   React.useEffect(()=>{
@@ -169,10 +171,10 @@ function Story({t,theme}){
     <div ref={hint} aria-hidden="true" style={{display:'flex',justifyContent:'center',alignItems:'center',gap:6,marginTop:mob?14:20,font:'600 11px var(--font-sans)',letterSpacing:'.14em',textTransform:'uppercase',color:'var(--text-muted)'}}>
       {s.scrollHint}<svg width="12" height="12" viewBox="0 0 12 12" className="lh-bob"><path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
     </div>
-    <section ref={sec} style={{position:'relative',height:'calc('+(100+n*75)+'vh - '+navH+'px)',marginTop:mob?24:40}}>
+    <section ref={sec} style={{position:'relative',height:'calc('+(100+n*75)+'vh - '+(navH+barH)+'px)',marginTop:mob?24:40}}>
       {s.beats.map((_,i)=><div key={i} ref={el=>stopEls.current[i]=el} aria-hidden="true" style={{position:'absolute',left:0,width:1,height:1,pointerEvents:'none',
-        top:'calc((100% - (100vh - '+navH+'px)) * '+((i+1)/n)+')',scrollSnapAlign:'start',scrollSnapStop:'always'}}/>)}
-      <div style={{position:'sticky',top:navH,height:'calc(100vh - '+navH+'px)',display:'grid',alignItems:'center'}}>
+        top:'calc((100% - (100vh - '+(navH+barH)+'px)) * '+((i+1)/n)+')',scrollSnapAlign:'start',scrollSnapStop:'always'}}/>)}
+      <div style={{position:'sticky',top:navH,height:'calc(100vh - '+(navH+barH)+'px)',display:'grid',alignItems:'center'}}>
         {stacked
           ?<div ref={card} style={{...cardStyle,height:'calc(100% - 16px)'}}>
             {map}
