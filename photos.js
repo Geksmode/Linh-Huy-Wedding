@@ -79,6 +79,10 @@ const PHOTO_CSS=`
 .lhp-thumb:hover img{transform:scale(1.06)}
 .lhp-more{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(36,16,30,.55);color:#fff;font:600 22px var(--font-sans)}
 .lhp-play{position:absolute;inset:0;margin:auto;width:40px;height:40px;border-radius:50%;background:rgba(36,16,30,.6);display:flex;align-items:center;justify-content:center}
+.lhp-album{display:inline-flex;align-items:center;gap:10px;min-height:52px;padding:0 26px;border-radius:999px;text-decoration:none;font:600 14px var(--font-sans);letter-spacing:.12em;text-transform:uppercase;color:var(--text-strong);background:var(--surface-card);box-shadow:inset 0 0 0 2px var(--text-strong),var(--shadow-paper);transition:background var(--dur-fast),color var(--dur-fast),transform var(--dur-fast) var(--ease-out)}
+.lhp-album:hover{background:var(--text-strong);color:var(--paper)}
+.lhp-album:active{transform:scale(.98)}
+.lhp-album:focus-visible{outline:2px solid var(--focus-ring);outline-offset:3px}
 .lhp-skel{background:linear-gradient(90deg,var(--paper-2) 0%,var(--cream) 50%,var(--paper-2) 100%);background-size:200% 100%;animation:lhpskel 1.2s ease-in-out infinite}
 @keyframes lhpskel{to{background-position:-200% 0}}
 .lhp-box{position:fixed;inset:0;z-index:100;background:rgba(20,8,16,.96);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;animation:lhpbox .2s ease both;touch-action:pan-y}
@@ -92,6 +96,8 @@ const PHOTO_CSS=`
 function Icon({d,size=24}){return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{d}</svg>;}
 const ICON_UPLOAD=<><path d="M12 16V4"/><path d="m6 10 6-6 6 6"/><path d="M4 20h16"/></>;
 const ICON_PLUS=<><path d="M12 5v14"/><path d="M5 12h14"/></>;
+const ICON_ALBUM=<><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="m21 16-5-5-8 8"/></>;
+const ICON_OUT=<><path d="M14 4h6v6"/><path d="M20 4 11 13"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></>;
 const ICON_PLAY=<path d="M8 5v14l11-7z" fill="#fff" stroke="none"/>;
 function Photos({t,lang}){
   const p=t.photos;const mob=useIsMobile();
@@ -198,6 +204,11 @@ function Photos({t,lang}){
       {recent===null?<div className="lhp-groups">{[0,1,2].map(k=><div key={k} className="lhp-group"><div style={{display:'flex',gap:12,alignItems:'center'}}><div className="lhp-skel" style={{width:40,height:40,borderRadius:'50%'}}/><div className="lhp-skel" style={{height:14,width:'50%',borderRadius:6}}/></div><div className="lhp-mosaic">{[0,1,2].map(j=><div key={j} className="lhp-skel" style={{aspectRatio:'1',borderRadius:10}}/>)}</div></div>)}</div>
       :recent.length===0?<p style={{margin:0,textAlign:'center',font:'italic 17px/1.5 var(--font-serif)',color:'var(--text-muted)'}}>{recentErr?p.recentErr:p.empty}</p>
       :<div className="lhp-groups">{recent.map((g,gi)=><Group key={g.files[0].id} g={g} gi={gi} p={p} lang={lang} local={local.current} open={i=>setBox({files:g.files,i})}/>)}</div>}
+      {window.PHOTOS_ALBUM_URL&&<div style={{display:'flex',justifyContent:'center',marginTop:mob?4:8}}>
+        <a className="lhp-album" href={window.PHOTOS_ALBUM_URL} target="_blank" rel="noopener">
+          <Icon d={ICON_ALBUM} size={20}/>{p.seeAll}<Icon d={ICON_OUT} size={16}/>
+        </a>
+      </div>}
     </section>
     {box&&<Lightbox files={box.files} i={box.i} setI={i=>setBox(b=>({...b,i}))} onClose={()=>setBox(null)} p={p} local={local.current}/>}
   </main>;
