@@ -14,9 +14,11 @@
 <script type="text/babel" src="story.js"></script>
 <script type="text/babel" src="schedule.js"></script>
 <script type="text/babel" src="rsvp.js"></script>
+<script type="text/babel" src="photos.js"></script>
 <script type="text/babel">
 function App(){
-  const [page,setPage]=React.useState(localStorage.getItem('lh-page')||'home');
+  // ?page=photos (QR code on the tables) opens a page directly.
+  const [page,setPage]=React.useState(()=>new URLSearchParams(location.search).get('page')||localStorage.getItem('lh-page')||'home');
   const [lang,setLangS]=React.useState(()=>{const q=new URLSearchParams(location.search).get('lang');const l=window.STRINGS[q]?q:localStorage.getItem('lh-lang');return window.STRINGS[l]?l:'vi';});
   const go=p=>{setPage(p);localStorage.setItem('lh-page',p);window.scrollTo(0,0)};
   const setLang=l=>{setLangS(l);localStorage.setItem('lh-lang',l)};
@@ -25,7 +27,7 @@ function App(){
   React.useEffect(()=>{document.documentElement.dataset.theme=theme},[theme]);
   React.useEffect(()=>{document.documentElement.lang=lang;document.documentElement.dataset.lang=lang},[lang]);
   const t=window.STRINGS[lang];
-  const P={home:Home,story:Story,schedule:Schedule,rsvp:Rsvp}[page]||Home;
+  const P={home:Home,story:Story,schedule:Schedule,rsvp:Rsvp,photos:Photos}[page]||Home;
   return <><Nav page={page} go={go} t={t} lang={lang} setLang={setLang}/><P go={go} t={t} theme={theme} lang={lang}/><Footer t={t} theme={theme}/><StyleSwitch theme={theme} setTheme={setTheme}/></>;
 }
 ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
