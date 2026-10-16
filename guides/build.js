@@ -1,5 +1,5 @@
 // Génère les guides PDF (un par cérémonie et par langue) à partir de content.js.
-// Usage : node guides/build.js   (nécessite playwright + Chromium)
+// Usage : node guides/build.js [fr en vi]   (nécessite playwright + Chromium)
 const path = require('path');
 const fs = require('fs');
 const { chromium } = require('playwright');
@@ -76,6 +76,8 @@ li:last-child .rail:before{display:none}
 .lexg span{display:block;color:var(--body)}
 .pg{transform-origin:top left}
 .recto{break-after:page}
+/* Petit retrait : sinon les accents des majuscules du titre débordent et s'impriment en bas du recto. */
+.verso{padding-top:6px}
 .verso h2{margin-top:0}
 .nt{text-transform:none;letter-spacing:.06em}
 .end{margin-top:10px;text-align:center;font:26pt "First Encounter","Playfair Display",cursive;color:var(--lacquer)}
@@ -120,7 +122,8 @@ function render(lang, day, idx) {
   // Largeur du contenu A4 (210 mm − 2 × 15 mm de marges) pour mesurer les hauteurs comme à l'impression.
   const page = await browser.newPage({ viewport: { width: Math.round(180 * 96 / 25.4), height: 1000 } });
   await page.emulateMedia({ media: 'print' });
-  for (const lang of Object.values(content)) {
+  const only = process.argv.slice(2);
+  for (const lang of Object.values(content).filter(l => !only.length || only.includes(l.file))) {
     for (const [i, day] of lang.days.entries()) {
       const out = path.join(__dirname, `guide-${lang.file}-${i + 1}-${day.slug}.pdf`);
       const html = path.join(__dirname, '.tmp.html');
