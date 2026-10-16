@@ -5,6 +5,12 @@ const SHEET_NAME = 'RSVP';
 // Drive folder ID for guest photos (the part after /folders/ in the folder URL).
 // Leave empty: a folder "Linh & Huy — Photos" is created in the owner's Drive on the first upload.
 const PHOTO_FOLDER_ID = '';
+
+// Run this once from the editor (▷ Exécuter) to grant Drive access and create the photo folder.
+function autoriser() {
+  Logger.log('Dossier photos : ' + photoFolder().getUrl());
+}
+
 const HEADERS = ['timestamp','name','email','phone','attending','partySize','events','transport','busTrip','note','lang'];
 
 function doPost(e) {
