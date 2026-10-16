@@ -5,9 +5,12 @@ const SHEET_NAME = 'RSVP';
 // Drive folder ID for guest photos (the part after /folders/ in the folder URL).
 // Leave empty: a folder "Linh & Huy — Photos" is created in the owner's Drive on the first upload.
 const PHOTO_FOLDER_ID = '';
-// Photos page history: the last RECENT_FILES uploads are kept in script properties, shown as RECENT_GROUPS groups.
-const RECENT_FILES = 50;
+// Photos page history: built from the Drive folder itself (deleting a photo in Drive removes it from the album),
+// RECENT_GROUPS groups, cached RECENT_CACHE_S seconds.
 const RECENT_GROUPS = 6;
+const RECENT_CACHE_S = 30;
+// Files added by hand (no batch in their description) are grouped when added less than this apart.
+const LOOSE_GAP_MS = 10 * 60 * 1000;
 
 // Run this once from the editor (▷ Exécuter) to grant Drive access and create the photo folder.
 function autoriser() {
@@ -48,41 +51,76 @@ function savePhoto(data) {
     const name = (data.guest ? data.guest.replace(/[\\/:*?"<>|]/g, '').slice(0, 40) + ' - ' : '') + data.name;
     const blob = Utilities.newBlob(Utilities.base64Decode(data.data), data.mime || 'application/octet-stream', name);
     const file = photoFolder().createFile(blob);
-    if (data.guest) file.setDescription('Envoyé par ' + data.guest);
+    // The description keeps who sent it and the upload group, read back by doGet.
+    const batch = String(data.batch || file.getId()).replace(/[^\w-]/g, '').slice(0, 40);
+    file.setDescription((data.guest ? 'Envoyé par ' + data.guest + ' · envoi ' : 'Envoi ') + batch);
     // Viewable by link so the photos page can show thumbnails; an upload still succeeds if the domain forbids it.
-    try { file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW); } catch (err) {}
-    remember({ id: file.getId(), b: String(data.batch || file.getId()).slice(0, 40), g: String(data.guest || '').slice(0, 40), t: Date.now(), v: /^video\//.test(data.mime) ? 1 : 0 });
+    shareByLink(file);
+    CacheService.getScriptCache().remove('recent');
     return json({ ok: true, id: file.getId() });
   } catch (err) {
     return json({ ok: false, error: String(err) });
   }
 }
 
-function remember(entry) {
-  const lock = LockService.getScriptLock();
-  lock.waitLock(10000);
+function shareByLink(file) {
   try {
-    const props = PropertiesService.getScriptProperties();
-    const list = JSON.parse(props.getProperty('recent') || '[]');
-    list.push(entry);
-    props.setProperty('recent', JSON.stringify(list.slice(-RECENT_FILES)));
-  } finally {
-    lock.releaseLock();
-  }
+    if (file.getSharingAccess() !== DriveApp.Access.ANYONE_WITH_LINK) file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  } catch (err) {}
 }
 
 // GET ?action=recent → latest upload groups (one group = one selection by a guest), newest first.
 function doGet(e) {
   if (!e || !e.parameter || e.parameter.action !== 'recent') return json({ ok: true });
-  const list = JSON.parse(PropertiesService.getScriptProperties().getProperty('recent') || '[]');
-  const groups = {};
-  list.forEach(f => {
-    const g = groups[f.b] || (groups[f.b] = { guest: f.g, t: 0, files: [] });
-    g.t = Math.max(g.t, f.t);
+  const cache = CacheService.getScriptCache();
+  const hit = cache.get('recent');
+  if (hit) return ContentService.createTextOutput(hit).setMimeType(ContentService.MimeType.JSON);
+  const out = JSON.stringify({ ok: true, groups: recentGroups() });
+  try { cache.put('recent', out, RECENT_CACHE_S); } catch (err) {}
+  return ContentService.createTextOutput(out).setMimeType(ContentService.MimeType.JSON);
+}
+
+// "Envoyé par Mai · envoi k3f9" | "Envoi k3f9" | "Envoyé par Mai" (older uploads) | anything else (added by hand).
+function parseDescription(d) {
+  let m = d.match(/^Envoyé par (.*) · envoi ([\w-]+)$/);
+  if (m) return { guest: m[1], batch: m[2] };
+  m = d.match(/^Envoi ([\w-]+)$/);
+  if (m) return { guest: '', batch: m[1] };
+  m = d.match(/^Envoyé par (.*)$/);
+  return { guest: m ? m[1] : '', batch: '' };
+}
+
+function recentGroups() {
+  const files = [];
+  const it = photoFolder().searchFiles('trashed = false');
+  while (it.hasNext()) {
+    const f = it.next();
+    const mime = f.getMimeType();
+    if (!/^(image|video)\//.test(mime)) continue;
+    const d = parseDescription(f.getDescription() || '');
+    files.push({ file: f, id: f.getId(), t: f.getDateCreated().getTime(), v: /^video\//.test(mime) ? 1 : 0, guest: d.guest, batch: d.batch });
+  }
+  files.sort((a, b) => b.t - a.t);
+  const groups = [], byKey = {}, loose = {};
+  files.forEach(f => {
+    let key = f.batch && 'b:' + f.batch;
+    if (!key) {
+      // Newest first: join the group of the same sender if the previous file is close enough in time.
+      const last = loose[f.guest];
+      key = last && last.t - f.t < LOOSE_GAP_MS ? last.key : 'l:' + f.id;
+      loose[f.guest] = { key, t: f.t };
+    }
+    let g = byKey[key];
+    if (!g) {
+      if (groups.length >= RECENT_GROUPS) return;
+      g = byKey[key] = { guest: f.guest, t: f.t, files: [] };
+      groups.push(g);
+    }
     g.files.push({ id: f.id, v: f.v });
+    shareByLink(f.file);
   });
-  const out = Object.values(groups).sort((a, b) => b.t - a.t).slice(0, RECENT_GROUPS);
-  return json({ ok: true, groups: out });
+  groups.forEach(g => g.files.reverse());
+  return groups;
 }
 
 function photoFolder() {
