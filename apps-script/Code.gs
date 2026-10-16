@@ -6,8 +6,9 @@ const SHEET_NAME = 'RSVP';
 // Leave empty: a folder "Linh & Huy — Photos" is created in the owner's Drive on the first upload.
 const PHOTO_FOLDER_ID = '';
 // Photos page history: built from the Drive folder itself (deleting a photo in Drive removes it from the album),
-// RECENT_GROUPS groups, cached RECENT_CACHE_S seconds.
+// RECENT_GROUPS groups made from the RECENT_SCAN newest files (one Drive API call), cached RECENT_CACHE_S seconds.
 const RECENT_GROUPS = 6;
+const RECENT_SCAN = 200;
 const RECENT_CACHE_S = 30;
 // Files added by hand (no batch in their description) are grouped when added less than this apart.
 const LOOSE_GAP_MS = 10 * 60 * 1000;
@@ -15,6 +16,7 @@ const LOOSE_GAP_MS = 10 * 60 * 1000;
 // Run this once from the editor (▷ Exécuter) to grant Drive access and create the photo folder.
 function autoriser() {
   Logger.log('Dossier photos : ' + photoFolder().getUrl());
+  Logger.log('Derniers fichiers : ' + listRecentFiles().length);
 }
 
 const HEADERS = ['timestamp','name','email','phone','attending','partySize','events','transport','busTrip','note','lang'];
@@ -90,37 +92,44 @@ function parseDescription(d) {
   return { guest: m ? m[1] : '', batch: '' };
 }
 
+// Newest photos/videos of the folder, already sorted and without the trash: one request, whatever the folder size.
+function listRecentFiles() {
+  const q = "'" + photoFolderId() + "' in parents and trashed = false and (mimeType contains 'image/' or mimeType contains 'video/')";
+  const url = 'https://www.googleapis.com/drive/v3/files?pageSize=' + RECENT_SCAN + '&orderBy=createdTime%20desc'
+    + '&fields=files(id,mimeType,description,createdTime,permissionIds)&q=' + encodeURIComponent(q);
+  const res = UrlFetchApp.fetch(url, { headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() } });
+  return JSON.parse(res.getContentText()).files || [];
+}
+
 function recentGroups() {
-  const files = [];
-  const it = photoFolder().searchFiles('trashed = false');
-  while (it.hasNext()) {
-    const f = it.next();
-    const mime = f.getMimeType();
-    if (!/^(image|video)\//.test(mime)) continue;
-    const d = parseDescription(f.getDescription() || '');
-    files.push({ file: f, id: f.getId(), t: f.getDateCreated().getTime(), v: /^video\//.test(mime) ? 1 : 0, guest: d.guest, batch: d.batch });
-  }
-  files.sort((a, b) => b.t - a.t);
   const groups = [], byKey = {}, loose = {};
-  files.forEach(f => {
-    let key = f.batch && 'b:' + f.batch;
+  listRecentFiles().forEach(f => {
+    const d = parseDescription(f.description || '');
+    const t = new Date(f.createdTime).getTime();
+    let key = d.batch && 'b:' + d.batch;
     if (!key) {
       // Newest first: join the group of the same sender if the previous file is close enough in time.
-      const last = loose[f.guest];
-      key = last && last.t - f.t < LOOSE_GAP_MS ? last.key : 'l:' + f.id;
-      loose[f.guest] = { key, t: f.t };
+      const last = loose[d.guest];
+      key = last && last.t - t < LOOSE_GAP_MS ? last.key : 'l:' + f.id;
+      loose[d.guest] = { key, t };
     }
     let g = byKey[key];
     if (!g) {
       if (groups.length >= RECENT_GROUPS) return;
-      g = byKey[key] = { guest: f.guest, t: f.t, files: [] };
+      g = byKey[key] = { guest: d.guest, t, files: [] };
       groups.push(g);
     }
-    g.files.push({ id: f.id, v: f.v });
-    shareByLink(f.file);
+    g.files.push({ id: f.id, v: /^video\//.test(f.mimeType) ? 1 : 0 });
+    // Files added by hand to the folder are not shared yet: needed for their thumbnail.
+    if (!(f.permissionIds || []).includes('anyoneWithLink')) shareByLink(DriveApp.getFileById(f.id));
   });
   groups.forEach(g => g.files.reverse());
   return groups;
+}
+
+// Folder id without a Drive call once it is known.
+function photoFolderId() {
+  return PHOTO_FOLDER_ID || PropertiesService.getScriptProperties().getProperty('photoFolderId') || photoFolder().getId();
 }
 
 function photoFolder() {
