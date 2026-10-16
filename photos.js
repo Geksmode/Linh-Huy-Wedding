@@ -47,7 +47,7 @@ function Photos({t,lang}){
       <input ref={input} type="file" accept="image/*,video/*" multiple onChange={pick} style={{display:'none'}}/>
       <Button size="lg" fullWidth onClick={()=>input.current.click()}>{p.pick}</Button>
       <div style={{font:'400 14px/1.5 var(--font-sans)',color:'var(--text-muted)',textAlign:'center',marginTop:-10}}>{p.hint(PHOTO_MAX_MB)}</div>
-      {items.length>0&&<div aria-live="polite" style={{font:'600 13px var(--font-sans)',letterSpacing:'.04em',textAlign:'center',color:busy?'var(--text-muted)':'var(--success)'}}>
+      {(busy||done>0)&&<div aria-live="polite" style={{font:'600 13px var(--font-sans)',letterSpacing:'.04em',textAlign:'center',color:busy?'var(--text-muted)':'var(--success)'}}>
         {busy?p.sending(done,items.length):p.done(done)}
       </div>}
       {items.some(i=>i.status==='error')&&!busy&&<div style={{display:'grid',gap:10,justifyItems:'center',textAlign:'center'}}>
