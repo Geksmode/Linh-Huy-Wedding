@@ -75,8 +75,9 @@ li:last-child .rail:before{display:none}
 .lexg b{color:var(--ink);font-weight:600}.lexg i{color:var(--muted);font-size:8.5pt}
 .lexg span{display:block;color:var(--body)}
 .pg{transform-origin:top left}
-.verso{break-before:page}
+.recto{break-after:page}
 .verso h2{margin-top:0}
+.nt{text-transform:none;letter-spacing:.06em}
 .end{margin-top:10px;text-align:center;font:26pt "First Encounter","Playfair Display",cursive;color:var(--lacquer)}
 `;
 
@@ -90,7 +91,7 @@ function render(lang, day, idx) {
     <div class="ev">${st.optional ? `<span class="tag">${esc(st.optional)}</span>` : ''}<h3>${esc(st.title)}</h3><p>${esc(st.what)}</p>
     <p class="you"><b>${esc(c.yourPart)}</b>${esc(st.you)}</p></div></li>`).join('');
   return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(c.brand)} · ${esc(day.title)}</title><style>${css}</style></head><body>
-  <section class="pg">
+  <section class="pg recto">
   <section class="cover">
     <div class="label">${esc(c.tagline)} · ${esc(day.dayLabel)}</div>
     <div class="brand">${esc(c.brand)}</div>
@@ -107,7 +108,7 @@ function render(lang, day, idx) {
     ${c.lexicon.map(([vi, pr, tr]) => `<div><b>${esc(vi)}</b> <i>(${esc(pr)})</i><span>${esc(tr)}</span></div>`).join('')}</div></div>
   </section>
   <section class="pg verso">
-  <h2><small class="label">${esc(day.dayLabel)} · ${esc(day.viTitle)}</small>${esc(c.whatHappens)}</h2>
+  <h2><small class="label">${esc(day.dayLabel)} · <span class="nt">${esc(day.viTitle)}</span></small>${esc(c.whatHappens)}</h2>
   <ol class="tl">${steps}</ol>
   <div class="end">Trăm năm hạnh phúc</div>
   </section>
