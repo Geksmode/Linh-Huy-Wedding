@@ -32,6 +32,7 @@ function timeAgo(t,lang,justNow){
 const PHOTO_CSS=`
 .lhp-drop{all:unset;box-sizing:border-box;width:100%;cursor:pointer;display:grid;justify-items:center;gap:10px;padding:32px 20px;text-align:center;border-radius:var(--radius-md);border:2px dashed var(--sand);background:var(--paper);transition:border-color var(--dur-fast),background var(--dur-fast),transform var(--dur-fast) var(--ease-out)}
 .lhp-drop:hover,.lhp-drop.drag{border-color:var(--accent-primary);background:var(--lacquer-50)}
+.lhp-drop:disabled{cursor:default;opacity:.55}
 .lhp-drop:active{transform:scale(.99)}
 .lhp-drop:focus-visible{outline:2px solid var(--focus-ring);outline-offset:4px}
 .lhp-drop-icon{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--accent-primary);color:var(--paper);box-shadow:var(--shadow-lift);transition:transform var(--dur-base) var(--ease-bloom)}
@@ -43,6 +44,8 @@ const PHOTO_CSS=`
 .lhp-tile img{width:100%;height:100%;object-fit:cover;display:block;transition:opacity var(--dur-base),transform var(--dur-slow) var(--ease-out)}
 .lhp-tile.pending img{opacity:.5}
 .lhp-badge{position:absolute;right:6px;bottom:6px;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font:700 13px var(--font-sans);box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.lhp-x{all:unset;position:absolute;top:4px;right:4px;width:28px;height:28px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;background:rgba(36,16,30,.65);color:#fff;font:400 20px/1 var(--font-sans);transition:background var(--dur-fast)}
+.lhp-x:hover{background:var(--lacquer-500)}.lhp-x:focus-visible{outline:2px solid var(--focus-ring)}
 .lhp-spin{position:absolute;inset:0;margin:auto;width:28px;height:28px;border-radius:50%;border:3px solid rgba(255,255,255,.6);border-top-color:var(--accent-primary);animation:lhpspin .8s linear infinite}
 @keyframes lhpspin{to{transform:rotate(360deg)}}
 .lhp-pop{animation:lhppop .45s var(--ease-bloom)}
@@ -71,6 +74,7 @@ const PHOTO_CSS=`
 @media (prefers-reduced-motion:reduce){.lhp-group,.lhp-pop,.lhp-box{animation:none}.lhp-thumb:hover img{transform:none}}`;
 function Icon({d,size=24}){return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{d}</svg>;}
 const ICON_UPLOAD=<><path d="M12 16V4"/><path d="m6 10 6-6 6 6"/><path d="M4 20h16"/></>;
+const ICON_PLUS=<><path d="M12 5v14"/><path d="M5 12h14"/></>;
 const ICON_PLAY=<path d="M8 5v14l11-7z" fill="#fff" stroke="none"/>;
 function Photos({t,lang}){
   const p=t.photos;const mob=useIsMobile();
@@ -86,7 +90,8 @@ function Photos({t,lang}){
   const load=React.useCallback(()=>fetchRecent().then(g=>{setRecent(g);setRecentErr(false)}).catch(err=>{console.error(err);setRecentErr(true);setRecent(r=>r||[])}),[]);
   React.useEffect(()=>{load();const h=setInterval(()=>document.visibilityState==='visible'&&load(),60000);return()=>clearInterval(h)},[load]);
   const busy=items.some(i=>i.status==='sending'||i.status==='waiting');
-  const sendable=items.filter(i=>i.status!=='tooBig');
+  const staged=items.filter(i=>i.status==='staged').length;
+  const sendable=items.filter(i=>i.status!=='tooBig'&&i.status!=='staged');
   const done=items.filter(i=>i.status==='done').length;
   const failed=items.filter(i=>i.status==='error').length;
   const patch=(id,v)=>setItems(l=>l.map(i=>i.id===id?{...i,...v}:i));
@@ -101,20 +106,29 @@ function Photos({t,lang}){
     await Promise.all([worker(),worker()]);
     load();
   }
+  // Photos are first staged (the guest can add several times and remove some), then sent together as one group.
   function add(files){
     files=files.filter(f=>/^(image|video)\//.test(f.type)||/\.(heic|heif)$/i.test(f.name));
-    if(!files.length) return;
+    if(!files.length||busy) return;
+    const key=Date.now().toString(36);
+    const list=files.map((file,k)=>({id:key+'-'+k,file,url:file.type.startsWith('image/')?URL.createObjectURL(file):'',status:file.size>PHOTO_MAX_MB*1048576?'tooBig':'staged'}));
+    // A new selection after a finished send starts a new group.
+    setItems(l=>[...l.filter(i=>i.status!=='done'),...list]);
+  }
+  function remove(id){setItems(l=>l.filter(i=>{if(i.id===id&&i.url)URL.revokeObjectURL(i.url);return i.id!==id;}));}
+  function send(){
     try{localStorage.setItem('lh-guest',guest.trim())}catch(err){}
     const batch=Date.now().toString(36)+Math.random().toString(36).slice(2,6);
-    const list=files.map((file,k)=>({id:batch+'-'+k,batch,file,url:file.type.startsWith('image/')?URL.createObjectURL(file):'',status:file.size>PHOTO_MAX_MB*1048576?'tooBig':'waiting'}));
-    setItems(l=>[...l,...list]);
-    run(list.filter(i=>i.status==='waiting'));
+    const list=items.filter(i=>i.status==='staged'||i.status==='error').map(i=>({...i,batch,status:'waiting'}));
+    setItems(l=>l.map(i=>list.find(x=>x.id===i.id)||i));
+    run(list);
   }
   const retry=()=>{const f=items.filter(i=>i.status==='error');f.forEach(i=>patch(i.id,{status:'waiting'}));run(f);};
   const reset=()=>setItems([]);
   const onDrop=e=>{e.preventDefault();setDrag(false);add([...e.dataTransfer.files]);};
   const badge={done:['var(--jade-500)','✓'],error:['var(--lacquer-500)','!'],tooBig:['var(--lacquer-500)','!']};
   const label={font:'600 12px var(--font-sans)',letterSpacing:'var(--ls-label)',textTransform:'uppercase',color:'var(--accent-primary)'};
+  const sent=sendable.length>0;
   return <main style={{background:'var(--blush)',padding:mob?'40px 12px 64px':'72px 24px 96px'}}>
     <style>{PHOTO_CSS}</style>
     <SectionHeading eyebrow={p.eyebrow} title={p.title}/>
@@ -123,10 +137,10 @@ function Photos({t,lang}){
     <section style={{maxWidth:600,margin:(mob?24:36)+'px auto 0',background:'var(--surface-card)',borderRadius:'var(--radius-lg)',boxShadow:'var(--shadow-paper)',padding:mob?'20px 16px':'32px',display:'grid',gap:20}}>
       <TextField label={p.name} placeholder={p.optional} value={guest} onChange={e=>setGuest(e.target.value)}/>
       <input ref={input} type="file" accept="image/*,video/*" multiple onChange={e=>{add([...e.target.files]);e.target.value='';}} style={{display:'none'}}/>
-      <button type="button" className={'lhp-drop'+(drag?' drag':'')} onClick={()=>input.current.click()}
+      <button type="button" disabled={busy} className={'lhp-drop'+(drag?' drag':'')} onClick={()=>input.current.click()}
         onDragOver={e=>{e.preventDefault();setDrag(true)}} onDragLeave={()=>setDrag(false)} onDrop={onDrop}>
-        <span className="lhp-drop-icon"><Icon d={ICON_UPLOAD} size={28}/></span>
-        <span style={{font:'600 15px var(--font-sans)',letterSpacing:'.12em',textTransform:'uppercase',color:'var(--text-strong)'}}>{items.length?p.pickMore:p.pick}</span>
+        <span className="lhp-drop-icon"><Icon d={staged?ICON_PLUS:ICON_UPLOAD} size={28}/></span>
+        <span style={{font:'600 15px var(--font-sans)',letterSpacing:'.12em',textTransform:'uppercase',color:'var(--text-strong)'}}>{staged?p.pickMore:p.pick}</span>
         {!mob&&<span style={{font:'italic 16px var(--font-serif)',color:'var(--text-muted)'}}>{p.drop}</span>}
         <span style={{font:'400 13px var(--font-sans)',color:'var(--text-muted)'}}>{p.hint(PHOTO_MAX_MB)}</span>
       </button>
@@ -134,25 +148,28 @@ function Photos({t,lang}){
       {items.length>0&&<div style={{display:'grid',gap:14}}>
         <div aria-live="polite" style={{display:'grid',gap:8}}>
           <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',gap:12,font:'600 14px var(--font-sans)',color:'var(--text-strong)'}}>
-            <span>{busy?p.sending:(failed?p.someFailed(failed):p.doneTitle(done))}</span>
-            <span style={{color:'var(--text-muted)',fontWeight:500,whiteSpace:'nowrap'}}>{done} / {sendable.length}</span>
+            <span>{busy?p.sending:staged?p.ready(staged):failed?p.someFailed(failed):sent?p.doneTitle(done):p.tooBig(PHOTO_MAX_MB)}</span>
+            {sent&&<span style={{color:'var(--text-muted)',fontWeight:500,whiteSpace:'nowrap'}}>{done} / {sendable.length}</span>}
           </div>
-          <div className="lhp-bar"><span style={{width:(sendable.length?done/sendable.length*100:0)+'%'}}/></div>
+          {sent&&<div className="lhp-bar"><span style={{width:done/sendable.length*100+'%'}}/></div>}
         </div>
         <ul className="lhp-grid">
-          {items.map(i=>{const b=badge[i.status];return <li key={i.id} className={'lhp-tile'+(i.status==='done'?'':' pending')}>
+          {items.map(i=>{const b=badge[i.status];return <li key={i.id} className={'lhp-tile lhp-pop'+(i.status==='done'||i.status==='staged'?'':' pending')}>
             {i.url?<img src={i.url} alt="" onError={e=>{e.currentTarget.style.display='none'}}/>
               :<div style={{display:'flex',alignItems:'center',justifyContent:'center',height:'100%',padding:6,font:'500 11px var(--font-sans)',color:'var(--cocoa)',wordBreak:'break-all',textAlign:'center'}}>{i.file.name}</div>}
             {(i.status==='sending'||i.status==='waiting')&&<span className="lhp-spin" style={i.status==='waiting'?{animationPlayState:'paused',opacity:.5}:null}/>}
             {b&&<span className="lhp-badge lhp-pop" style={{background:b[0]}}>{b[1]}</span>}
+            {(i.status==='staged'||i.status==='tooBig')&&<button type="button" className="lhp-x" aria-label={p.remove} onClick={()=>remove(i.id)}>×</button>}
           </li>;})}
         </ul>
-        {items.some(i=>i.status==='tooBig')&&<div style={{font:'400 14px/1.5 var(--font-sans)',color:'var(--danger)'}}>{p.tooBig(PHOTO_MAX_MB)}</div>}
-        {!busy&&failed>0&&<div style={{display:'grid',gap:10,justifyItems:'center',textAlign:'center'}}>
+        {staged>0&&items.some(i=>i.status==='tooBig')&&<div style={{font:'400 14px/1.5 var(--font-sans)',color:'var(--danger)'}}>{p.tooBig(PHOTO_MAX_MB)}</div>}
+        {/* Sticky so the send button stays in reach on a phone while photos are added. */}
+        {staged>0&&!busy&&<div style={{position:'sticky',bottom:12,zIndex:2,borderRadius:'var(--radius-pill)',boxShadow:'var(--shadow-lift)'}}><Button size="lg" fullWidth onClick={send}>{p.send(staged)}</Button></div>}
+        {!busy&&!staged&&failed>0&&<div style={{display:'grid',gap:10,justifyItems:'center',textAlign:'center'}}>
           <span style={{font:'400 14px/1.5 var(--font-sans)',color:'var(--danger)'}}>{p.err}</span>
           <Button size="sm" onClick={retry}>{p.retry}</Button>
         </div>}
-        {!busy&&!failed&&done>0&&<div style={{display:'flex',justifyContent:'center'}}><Button variant="secondary" size="sm" onClick={reset}>{p.clear}</Button></div>}
+        {!busy&&!staged&&!failed&&done>0&&<div style={{display:'flex',justifyContent:'center'}}><Button variant="secondary" size="sm" onClick={reset}>{p.clear}</Button></div>}
       </div>}
     </section>
 
