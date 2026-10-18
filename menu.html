@@ -1,0 +1,94 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Linh & Huy · Menu</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg"><link rel="stylesheet" href="styles.css">
+<!-- Printable menus (A5, one per page): vegetarian Saturday dinner, vegetarian Sunday lunch, wedding menu. Print: Ctrl+P, A5, no margins → menu.pdf -->
+<style>
+@page{size:A5;margin:0}
+body{margin:0;background:#E9E2D6}
+.page{box-sizing:border-box;width:148mm;height:210mm;margin:0 auto;padding:7mm;background:var(--cream);page-break-after:always;break-after:page}
+.page:last-child{page-break-after:auto;break-after:auto}
+.frame{position:relative;box-sizing:border-box;height:100%;border:.3mm solid var(--gold-300);outline:.3mm solid var(--gold-300);outline-offset:-1.6mm;background:var(--paper);display:flex;flex-direction:column;align-items:center;text-align:center;padding:12mm 12mm 8mm}
+.corner{position:absolute;width:10mm;height:10mm;border-left:.5mm solid var(--cinnabar-700);border-top:.5mm solid var(--cinnabar-700)}
+.corner::before{content:"";position:absolute;left:1.4mm;top:1.4mm;width:6mm;height:6mm;border-left:.3mm solid var(--cinnabar-700);border-top:.3mm solid var(--cinnabar-700)}
+.corner::after{content:"";position:absolute;left:3.6mm;top:3.6mm;width:1.1mm;height:1.1mm;border-radius:50%;background:var(--cinnabar-700)}
+.tl{left:3mm;top:3mm}.tr{right:3mm;top:3mm;transform:scaleX(-1)}.bl{left:3mm;bottom:3mm;transform:scaleY(-1)}.br{right:3mm;bottom:3mm;transform:scale(-1)}
+.label{font:500 2.5mm var(--font-sans);letter-spacing:var(--ls-label);text-transform:uppercase;color:var(--gold-500)}
+.names{font:17mm/1.15 var(--font-script);color:var(--cinnabar-700);white-space:nowrap;margin:1mm 0 0}
+.when{font:italic 3.3mm/1.3 var(--font-serif);color:var(--cinnabar-700)}
+.when small{display:block;font:2.5mm/1.4 var(--font-sans);font-style:normal;color:var(--text-muted)}
+.rule{display:flex;align-items:center;gap:3mm;width:78%;margin:3mm 0 4mm;color:var(--cinnabar-700);font-size:2.6mm}
+.rule::before,.rule::after{content:"";flex:1;border-top:.25mm solid var(--gold-500)}
+.dishes{flex:1;display:flex;flex-direction:column;justify-content:space-evenly;width:100%}
+.dish b{display:block;font:600 3.6mm/1.25 var(--font-serif);color:var(--cinnabar-700)}
+.dish i{display:block;font:2.45mm/1.35 var(--font-sans);font-style:normal;color:var(--text-muted)}
+.section{margin-top:1.5mm}
+.thanks{font:italic 3mm var(--font-serif);color:var(--cinnabar-700);margin-top:3mm}
+@media print{body{background:none}.page{margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style></head><body>
+<template id="corners"><span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span></template>
+
+<section class="page"><div class="frame">
+  <div class="label">Menu végétarien · Thực đơn chay</div>
+  <div class="names">Linh &amp; Huy</div>
+  <div class="when">Samedi 24 octobre · Dîner<small>Bữa chiều thứ Bảy, 15/9 âm lịch</small></div>
+  <div class="rule">❦</div>
+  <div class="dishes">
+    <div class="dish"><b>Riz gluant</b><i>Xôi</i></div>
+    <div class="dish"><b>Soupe veloutée</b><i>Súp</i></div>
+    <div class="dish"><b>Poulet végétal sauce rôtie</b><i>Gà sốt rô-ti chay</i></div>
+    <div class="dish"><b>Petits pains vapeur</b><i>Bánh bao</i></div>
+    <div class="dish"><b>Salade</b><i>Sa lát</i></div>
+    <div class="dish"><b>Nem végétal au riz grillé</b><i>Nem thính</i></div>
+    <div class="dish"><b>Nems croustillants</b><i>Nem xù</i></div>
+    <div class="dish"><b>Champignons sautés à l'ananas</b><i>Nấm xào dứa</i></div>
+    <div class="dish"><b>Bouillon aux pousses de bambou</b><i>Canh măng</i></div>
+    <div class="dish"><b>Riz blanc</b><i>Cơm trắng</i></div>
+  </div>
+  <div class="thanks">Bon appétit — Chúc ngon miệng</div>
+</div></section>
+
+<section class="page"><div class="frame">
+  <div class="label">Menu végétarien · Thực đơn chay</div>
+  <div class="names">Linh &amp; Huy</div>
+  <div class="when">Dimanche 25 octobre · Déjeuner<small>Bữa trưa Chủ nhật, 16/9 âm lịch</small></div>
+  <div class="rule">❦</div>
+  <div class="dishes">
+    <div class="dish"><b>Riz gluant</b><i>Xôi</i></div>
+    <div class="dish"><b>Poitrine végétale en sauce</b><i>Ba chỉ sốt chay</i></div>
+    <div class="dish"><b>Vermicelles de verre sautés</b><i>Miến xào</i></div>
+    <div class="dish"><b>Rouleaux de phở</b><i>Phở cuốn</i></div>
+    <div class="dish"><b>Salade de racine de lotus</b><i>Nộm củ sen</i></div>
+    <div class="dish"><b>Champignons bois de cerf sautés au chou-fleur</b><i>Nấm lộc nhung xào súp lơ</i></div>
+    <div class="dish"><b>Nems croustillants</b><i>Nem xù</i></div>
+    <div class="dish"><b>Bouillon de légumes</b><i>Canh củ quả</i></div>
+    <div class="dish"><b>Spiruline marinée citronnelle &amp; kumquat</b><i>Tảo xoắn ngâm sả tắc</i></div>
+    <div class="dish"><b>Riz blanc</b><i>Cơm trắng</i></div>
+  </div>
+  <div class="thanks">Bon appétit — Chúc ngon miệng</div>
+</div></section>
+
+<section class="page"><div class="frame">
+  <div class="label">Menu du mariage</div>
+  <div class="names">Linh &amp; Huy</div>
+  <div class="rule">❦</div>
+  <div class="dishes">
+    <div class="dish"><b>Poulet à la vapeur aux feuilles de citronnier</b><i>Gà hấp lá chanh</i></div>
+    <div class="dish"><b>Crevettes tigrées frites aux amandes</b><i>Tôm sú chiên hạnh nhân</i></div>
+    <div class="dish"><b>Esturgeon poêlé au galanga</b><i>Cá tầm chao giềng</i></div>
+    <div class="dish"><b>Veau sauté aux pousses de bambou</b><i>Thịt bê xào măng trúc</i></div>
+    <div class="dish"><b>Chevreau poêlé à l'ail croustillant</b><i>Dê chao cháy tỏi</i></div>
+    <div class="dish"><b>Bœuf en sauce et petits pains vapeur</b><i>Bò sốt bánh bao</i></div>
+    <div class="dish"><b>Légumes mầm đá blanchis, sauce à l'œuf</b><i>Mầm đá luộc trứng</i></div>
+    <div class="dish"><b>Salade, sauce fruit de la passion</b><i>Sa lát sốt chanh leo</i></div>
+    <div class="dish"><b>Bouillon de boulettes de porc aux champignons</b><i>Canh mọc thả nấm</i></div>
+    <div class="dish"><b>Riz gluant parfumé Hoàng Phố</b><i>Xôi nếp hoàng phố</i></div>
+    <div class="dish"><b>Riz jasmin</b><i>Cơm tám</i></div>
+    <div class="label section">Dessert</div>
+    <div class="dish"><b>Yaourts</b><i>Sữa chua</i></div>
+    <div class="label section">Boissons</div>
+    <div class="dish"><b>Bière &amp; alcools, sodas (Coca-Cola, 7 Up), eau</b><i>Rượu bia, nước ngọt, nước lọc</i></div>
+  </div>
+  <div class="thanks">Bon appétit — Chúc ngon miệng</div>
+</div></section>
+
+<script>document.querySelectorAll('.frame').forEach(f=>f.prepend(document.getElementById('corners').content.cloneNode(true)))</script>
+</body></html>
