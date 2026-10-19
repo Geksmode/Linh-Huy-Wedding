@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Déroulé photo-vidéo des fiançailles</title>
+<style>
+@font-face{font-family:"Be Vietnam Pro";src:url("fonts/BeVietnamPro-Regular.ttf");font-weight:400}
+@font-face{font-family:"Be Vietnam Pro";src:url("fonts/BeVietnamPro-Italic.ttf");font-weight:400;font-style:italic}
+@font-face{font-family:"Be Vietnam Pro";src:url("fonts/BeVietnamPro-SemiBold.ttf");font-weight:600}
+@font-face{font-family:"Be Vietnam Pro";src:url("fonts/BeVietnamPro-Bold.ttf");font-weight:700}
+@font-face{font-family:"Playfair Display";src:url("fonts/PlayfairDisplay.ttf");font-weight:400 900}
+
+:root{
+  --paper:#FDF5E8;--blush:#F9E3DA;--sand:#EBD6BD;--cocoa:#7A5A52;
+  --plum:#3B1730;--body:#4E2A40;--lacquer:#C8322B;--lacquer-50:#FBE7E4;
+  --gold:#B8893B;--gold-50:#F7EEDC;
+}
+@page{size:A4;margin:14mm 14mm 16mm}
+*{box-sizing:border-box}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{margin:0;font-family:"Be Vietnam Pro",sans-serif;font-size:9.6pt;line-height:1.5;color:var(--body);background:#fff}
+
+.hero{background:var(--plum);color:var(--paper);border-radius:10px;padding:20px 24px 18px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-40px;top:-40px;width:170px;height:170px;border-radius:50%;border:2px solid rgba(242,163,58,.35)}
+.hero .kicker{font-size:8pt;letter-spacing:.18em;text-transform:uppercase;color:#F8C27A;font-weight:600}
+.hero h1{font-family:"Playfair Display",serif;font-weight:700;font-size:23pt;line-height:1.15;margin:6px 0 4px}
+.hero .sub{font-size:10pt;opacity:.9}
+.hero .sub b{color:#F8C27A}
+
+h2{font-family:"Playfair Display",serif;color:var(--plum);font-size:14pt;margin:18px 0 8px;display:flex;align-items:center;gap:10px}
+h2::after{content:"";flex:1;height:1px;background:var(--sand)}
+
+.info{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.info div{background:var(--paper);border:1px solid var(--sand);border-radius:8px;padding:8px 10px}
+.info dt{font-size:7.5pt;text-transform:uppercase;letter-spacing:.1em;color:var(--cocoa);font-weight:600}
+.info dd{margin:2px 0 0;font-weight:600;color:var(--plum)}
+.info .key{background:var(--lacquer-50);border-color:#E8766B}
+.info .key dd{color:var(--lacquer)}
+
+/* Bandeau récapitulatif */
+.bar{display:grid;grid-template-columns:repeat(4,1fr);margin:4px 0 2px;border-radius:8px;overflow:hidden;border:1px solid var(--sand)}
+.bar div{padding:6px 9px;font-size:8pt;border-right:1px solid var(--sand)}
+.bar div:last-child{border-right:0}
+.bar b{display:block;color:var(--plum);font-size:8.6pt}
+.bar span{color:var(--cocoa)}
+.bar .main{background:var(--lacquer-50)}
+.bar .main b{color:var(--lacquer)}
+
+.phase{border:1px solid var(--sand);border-radius:10px;margin:12px 0;break-inside:avoid;overflow:hidden}
+.phase-head{display:flex;align-items:baseline;gap:12px;background:var(--paper);padding:9px 14px;border-bottom:1px solid var(--sand)}
+.phase-head .n{font-family:"Playfair Display",serif;font-weight:700;font-size:16pt;color:var(--gold);line-height:1}
+.phase-head .t{font-weight:700;color:var(--plum);font-size:11pt}
+.phase-head .time{margin-left:auto;font-weight:700;color:var(--lacquer);font-size:9.5pt;white-space:nowrap}
+.phase.main .phase-head{background:var(--lacquer-50)}
+.phase-body{padding:4px 14px 10px}
+
+.slot{display:grid;grid-template-columns:86px 1fr;gap:12px;padding:8px 0;border-bottom:1px dashed var(--sand);break-inside:avoid}
+.slot:last-child{border-bottom:0}
+.slot .when{font-weight:700;color:var(--plum);font-size:8.6pt;padding-top:1px}
+.slot .when small{display:block;font-weight:400;color:var(--cocoa);font-size:7.6pt}
+.slot h3{margin:0 0 3px;font-size:9.8pt;color:var(--plum);font-weight:700}
+ul{margin:0;padding-left:15px}
+li{margin:2px 0}
+li::marker{color:var(--gold)}
+ol.order{margin:2px 0 0;padding:0;list-style:none;counter-reset:o}
+ol.order li{counter-increment:o;display:flex;gap:8px;align-items:baseline;margin:3px 0}
+ol.order li::before{content:counter(o);flex:none;width:17px;height:17px;border-radius:50%;background:var(--plum);color:var(--paper);font-size:7.5pt;font-weight:700;display:inline-flex;align-items:center;justify-content:center;transform:translateY(-1px)}
+.tag{display:inline-block;background:var(--gold-50);color:#8A6424;border-radius:4px;padding:0 5px;font-size:7.6pt;font-weight:600;margin-left:4px}
+
+.foot{margin-top:14px;font-size:7.8pt;color:var(--cocoa);text-align:center;font-style:italic}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="kicker">Équipe photo &amp; vidéo reportage</div>
+  <h1>Scénario &amp; déroulé<br>photo-vidéo des fiançailles</h1>
+  <div class="sub">Créneau <b>14:00 – 16:00</b> &nbsp;·&nbsp; Cérémonie principale <b>15:00</b> &nbsp;·&nbsp; Chez la famille de la mariée</div>
+</header>
+
+<h2>I. Informations générales</h2>
+<dl class="info">
+  <div><dt>Événement</dt><dd>Lễ Ăn Hỏi (fiançailles)<br><span style="font-weight:400;color:var(--cocoa)">Tradition du Nord du Vietnam</span></dd></div>
+  <div><dt>Présence de l'équipe</dt><dd>14:00 – 16:00</dd></div>
+  <div class="key"><dt>Heure clé</dt><dd>15:00<br><span style="font-weight:400">Entrée du cortège du marié pour la cérémonie</span></dd></div>
+  <div><dt>Lieu</dt><dd>Maison de la famille de la mariée</dd></div>
+  <div style="grid-column:span 2"><dt>Équipe</dt><dd>Photographe &amp; vidéaste reportage</dd></div>
+</dl>
+
+<h2>II. Déroulé détaillé</h2>
+<div class="bar">
+  <div><b>14:00 – 14:30</b><span>Préparatifs &amp; détails</span></div>
+  <div><b>14:30 – 15:00</b><span>Porteuses &amp; accueil du cortège</span></div>
+  <div class="main"><b>15:00 – 15:30</b><span>Cérémonie principale</span></div>
+  <div><b>15:30 – 16:00</b><span>Photos, lại quả &amp; départ</span></div>
+</div>
+
+<section class="phase">
+  <div class="phase-head"><span class="n">01</span><span class="t">Préparatifs, détails &amp; portraits de la mariée</span><span class="time">14:00 – 14:30</span></div>
+  <div class="phase-body">
+    <div class="slot">
+      <div class="when">Détails<small>Décoration &amp; détails</small></div>
+      <div>
+        <ul>
+          <li><b>Photo/vidéo :</b> plans larges et détails de la décoration chez la mariée (fond principal, arche fleurie, table à thé, service à thé, panneau aux prénoms des mariés, bouquet).</li>
+          <li><b>Tenues &amp; accessoires :</b> áo dài des fiançailles, bagues/bijoux, chaussures de la mariée.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="slot">
+      <div class="when">Moments<small>Mariée &amp; famille</small></div>
+      <div>
+        <ul>
+          <li>La mère ou un proche aide la mariée à enfiler son áo dài, à mettre ses bijoux et aux dernières retouches.</li>
+          <li>Moments d'émotion et échanges spontanés entre la mariée et ses parents/proches avant la cérémonie.</li>
+          <li>Séance de portraits posés de la mariée en áo dài.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="phase">
+  <div class="phase-head"><span class="n">02</span><span class="t">Porteuses de plateaux &amp; accueil du cortège du marié</span><span class="time">14:30 – 15:00</span></div>
+  <div class="phase-body">
+    <div class="slot">
+      <div class="when">14:30 – 14:45<small>Porteuses de tráp</small></div>
+      <div>
+        <ul>
+          <li>Les porteuses de plateaux (tráp) se rassemblent et ajustent leurs áo dài assortis.</li>
+          <li>L'équipe réalise une série photo/clip joyeuse et espiègle avec les porteuses, devant le fond principal ou l'arche fleurie.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="slot">
+      <div class="when">14:45 – 15:00<small>Arrivée du cortège &amp; remise des plateaux</small></div>
+      <div>
+        <ul>
+          <li>Capter l'arrivée du cortège du marié dans la ruelle/au portail, avec les porteurs portant les plateaux d'offrandes.</li>
+        </ul>
+        <h3 style="margin-top:6px">Remise des plateaux</h3>
+        <ul>
+          <li>Plans serrés et plans larges de la remise des plateaux entre porteurs et porteuses.</li>
+          <li>Saisir les sourires et l'émotion lors de l'échange des enveloppes rouges (lì xì) entre les deux équipes.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="phase main">
+  <div class="phase-head"><span class="n">03</span><span class="t">Cérémonie principale <span class="tag">Lễ Ăn Hỏi</span></span><span class="time">15:00 – 15:30</span></div>
+  <div class="phase-body">
+    <div class="slot">
+      <div class="when">15:00 – 15:10<small>Salutations &amp; discours</small></div>
+      <div>
+        <ul>
+          <li>Plan large des deux familles installées autour de la table à thé.</li>
+          <li>Gros plans sur les plateaux d'offrandes (alcool, noix d'arec et feuilles de bétel, gâteaux cốm/phu thê, pyramide de fruits…) disposés avec soin.</li>
+          <li>Capter l'émotion et les discours des chefs de délégation des deux familles (demande et acceptation des offrandes).</li>
+        </ul>
+      </div>
+    </div>
+    <div class="slot">
+      <div class="when">15:10 – 15:20<small>Remise des offrandes</small></div>
+      <div>
+        <ul>
+          <li>Gros plans sur l'échange des offrandes entre les deux familles, devant le fond principal.</li>
+          <li>Les mariés côte à côte saluent et servent le thé aux aînés des deux familles.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="slot">
+      <div class="when">15:20 – 15:30<small>Encens aux ancêtres</small></div>
+      <div>
+        <ul>
+          <li>Les parents de la mariée accompagnent les mariés à l'autel des ancêtres pour le rituel d'encens et l'annonce aux ancêtres.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="phase">
+  <div class="phase-head"><span class="n">04</span><span class="t">Photos souvenirs, lại quả &amp; fin</span><span class="time">15:30 – 16:00</span></div>
+  <div class="phase-body">
+    <div class="slot">
+      <div class="when">15:30 – 15:45<small>Photos de groupe</small></div>
+      <div>
+        <h3>Dans cet ordre</h3>
+        <ol class="order">
+          <li>Mariés + parents des deux côtés &amp; chefs de délégation.</li>
+          <li>Mariés + famille et proches des deux côtés.</li>
+          <li>Mariés + porteurs et porteuses de plateaux.</li>
+          <li><span>Courte séance des mariés en couple <b>(5–7 min)</b> devant le fond principal ou l'arche fleurie.</span></li>
+        </ol>
+      </div>
+    </div>
+    <div class="slot">
+      <div class="when">15:45 – 15:55<small>Lại quả (retour des plateaux)</small></div>
+      <div>
+        <ul>
+          <li>Photo/vidéo du moment où la famille de la mariée partage une partie des offrandes et la rend à la famille du marié.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="slot">
+      <div class="when">15:55 – 16:00<small>Départ du cortège</small></div>
+      <div>
+        <ul>
+          <li>Capter le départ du cortège du marié.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<p class="foot">Tráp : plateaux d'offrandes · Lì xì : enveloppes rouges · Lại quả : part des offrandes rendue à la famille du marié &nbsp;—&nbsp; Fiançailles de Linh &amp; Huy</p>
+
+</body>
+</html>
