@@ -95,6 +95,12 @@ body{line-height:1.42}
 .gloss{break-inside:avoid}
 .phase{margin:10px 0}
 .slot{padding:6px 0}
+.groups{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.groups>div{border:1px solid var(--sand);border-radius:8px;padding:7px 8px;font-size:7.8pt;font-weight:600;color:var(--plum)}
+.groups>div>div{white-space:nowrap}
+.groups>div>div{margin:2px 0}
+.gh{display:flex;align-items:center;gap:6px;font-size:8pt;text-transform:uppercase;letter-spacing:.08em;color:var(--cocoa)}
+.gn{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:var(--plum);color:var(--paper);font-size:8pt}
 </style>
 </head>
 <body>
@@ -227,6 +233,20 @@ body{line-height:1.42}
   <div><b>Lì xì</b>Red envelope with lucky money</div>
   <div><b>Lại quả</b>Share of offerings returned to the groom's family</div>
 </div>
+
+<section style="break-inside:avoid">
+<h2>Groups</h2>
+<p style="margin:0 0 6px">Each group is one female and one male bearer. Your group partner is the person you face during the tray handover.</p>
+<div class="groups">
+  <div><div class="gh"><span class="gn">1</span>Group 1</div><div><span class="who f">F</span>LE THI THANH HA</div><div><span class="who m">M</span>NGUYEN MINH DUC</div></div>
+  <div><div class="gh"><span class="gn">2</span>Group 2</div><div><span class="who f">F</span>MARGAUX TALARMIN</div><div><span class="who m">M</span>FARCY GUILLAUME</div></div>
+  <div><div class="gh"><span class="gn">3</span>Group 3</div><div><span class="who f">F</span>METAYER CORALIE</div><div><span class="who m">M</span>BOINET PIERRE</div></div>
+  <div><div class="gh"><span class="gn">4</span>Group 4</div><div><span class="who f">F</span>HIEN LAURELIE</div><div><span class="who m">M</span>HONGSAVAN JULIEN</div></div>
+  <div><div class="gh"><span class="gn">5</span>Group 5</div><div><span class="who f">F</span>NGUYEN LINH</div><div><span class="who m">M</span>VALENTIN ALEXANDRE</div></div>
+  <div><div class="gh"><span class="gn">6</span>Group 6</div><div><span class="who f">F</span>BAN LINH 1</div><div><span class="who m">M</span>GUSMINI MATTHIEU</div></div>
+  <div><div class="gh"><span class="gn">7</span>Group 7</div><div><span class="who f">F</span>BAN LINH 2</div><div><span class="who m">M</span>LIVATHANA SYLVAIN</div></div>
+</div>
+</section>
 
 </body>
 </html>
